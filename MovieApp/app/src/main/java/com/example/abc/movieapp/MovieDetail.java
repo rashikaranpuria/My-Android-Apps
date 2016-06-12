@@ -19,4 +19,8 @@ public class MovieDetail {
         this.title = title;
         this.vote_average = vote_average;
     }
+
+    public MovieDetail() {
+
+    }
 }

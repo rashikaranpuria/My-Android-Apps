@@ -1,8 +1,10 @@
 package com.example.abc.movieapp;
 
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -22,7 +24,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.util.Arrays;
+import java.util.ArrayList;
 
 /**
  * A placeholder fragment containing a simple view.
@@ -41,7 +43,7 @@ public class MainActivityFragment extends Fragment {
                              Bundle savedInstanceState) {
 
         View rootView = inflater.inflate(R.layout.fragment_main, container, false);
-        movieGridAdapter= new MovieGridAdapter(getContext(), Arrays.asList(movies));
+        movieGridAdapter= new MovieGridAdapter(getContext(),new ArrayList<MovieDetail>());
 
         GridView gridview = (GridView) rootView.findViewById(R.id.gridview);
         gridview.setAdapter(movieGridAdapter);
@@ -57,8 +59,15 @@ public class MainActivityFragment extends Fragment {
     }
 
     private void updateView() {
+
         FetchMoviesTask movieTask = new FetchMoviesTask();
-        movieTask.execute();
+        //here you fetch prefrence and send in to update
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
+        String sort = prefs.getString(getString(R.string.pref_sort_key),
+                getString(R.string.pref_sort_popular));
+        Log.d("Type of sort",sort);
+
+        movieTask.execute(sort);
     }
 
     @Override
@@ -89,6 +98,7 @@ public class MainActivityFragment extends Fragment {
             for(int i = 0; i < movieArray.length(); i++) {
 
                 JSONObject movie_item = movieArray.getJSONObject(i);
+                resultStrs[i] = new MovieDetail();
                 resultStrs[i].poster_path = movie_item.getString("poster_path");
                 resultStrs[i].overview = movie_item.getString("overview");
                 resultStrs[i].releaseDate = movie_item.getString("release_date");
@@ -124,9 +134,9 @@ public class MainActivityFragment extends Fragment {
                 // Possible parameters are avaiable at OWM's forecast API page, at
                 // http://openweathermap.org/API#forecast
                 final String FORECAST_BASE_URL =
-                        "http://api.themoviedb.org/3/movie/popular";
+                        "http://api.themoviedb.org/3/movie/" + params[0];
                 final String APPID_PARAM = "api_key";
-
+                final
                 Uri builtUri = Uri.parse(FORECAST_BASE_URL).buildUpon()
                         .appendQueryParameter(APPID_PARAM, BuildConfig.THE_MOVIE_DB_API_KEY)
                         .build();
@@ -192,14 +202,13 @@ public class MainActivityFragment extends Fragment {
 
         @Override
         protected void onPostExecute(MovieDetail[] result) {
+            movies=result;
             if (result != null) {
                 movieGridAdapter.clear();
-                movieGridAdapter.addAll(result);
-//                movieGridAdapter.clear();
-//                for(String dayForecastStr : result) {
-//                    mForecastAdapter.add(dayForecastStr);
-//                }
-                // New data is back from the server.  Hooray!
+                for (int i=0;i<result.length;i++){
+                    //Log.d(LOG_TAG,"---"+result[i].title+"\n");
+                    movieGridAdapter.add(result[i]);
+                }
             }
 
         }
