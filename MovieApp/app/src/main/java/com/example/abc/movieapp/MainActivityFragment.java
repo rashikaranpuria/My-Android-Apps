@@ -126,23 +126,19 @@ public class MainActivityFragment extends Fragment {
             HttpURLConnection urlConnection = null;
             BufferedReader reader = null;
 
-            // Will contain the raw JSON response as a string.
-            String Mo = null;
-
             try {
                 // Construct the URL for the OpenWeatherMap query
                 // Possible parameters are avaiable at OWM's forecast API page, at
                 // http://openweathermap.org/API#forecast
-                final String FORECAST_BASE_URL =
-                        "http://api.themoviedb.org/3/movie/" + params[0];
+                final String FORECAST_BASE_URL = "http://api.themoviedb.org/3/movie/" + params[0];
                 final String APPID_PARAM = "api_key";
-                final
+
                 Uri builtUri = Uri.parse(FORECAST_BASE_URL).buildUpon()
                         .appendQueryParameter(APPID_PARAM, BuildConfig.THE_MOVIE_DB_API_KEY)
                         .build();
 
                 URL url = new URL(builtUri.toString());
-                Log.d(LOG_TAG, "hey"+String.valueOf(url));
+                Log.d(LOG_TAG, String.valueOf(url));
                 // Create the request to OpenWeatherMap, and open the connection
                 urlConnection = (HttpURLConnection) url.openConnection();
                 urlConnection.setRequestMethod("GET");
@@ -206,7 +202,6 @@ public class MainActivityFragment extends Fragment {
             if (result != null) {
                 movieGridAdapter.clear();
                 for (int i=0;i<result.length;i++){
-                    //Log.d(LOG_TAG,"---"+result[i].title+"\n");
                     movieGridAdapter.add(result[i]);
                 }
             }
