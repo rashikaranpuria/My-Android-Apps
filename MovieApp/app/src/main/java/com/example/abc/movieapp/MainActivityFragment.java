@@ -1,5 +1,6 @@
 package com.example.abc.movieapp;
 
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.AsyncTask;
@@ -12,7 +13,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.GridView;
-import android.widget.Toast;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -34,6 +34,7 @@ public class MainActivityFragment extends Fragment {
     private MovieGridAdapter movieGridAdapter;
 
     MovieDetail[] movies = {};
+    public static final String LOG_TAG=MainActivityFragment.class.getSimpleName();
 
     public MainActivityFragment() {
     }
@@ -45,14 +46,22 @@ public class MainActivityFragment extends Fragment {
         View rootView = inflater.inflate(R.layout.fragment_main, container, false);
         movieGridAdapter= new MovieGridAdapter(getContext(),new ArrayList<MovieDetail>());
 
+        // for detail page another adapter
+
         GridView gridview = (GridView) rootView.findViewById(R.id.gridview);
         gridview.setAdapter(movieGridAdapter);
+
+
 
         gridview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             public void onItemClick(AdapterView<?> parent, View v,
                                     int position, long id) {
-                Toast.makeText(getContext(), "hey i am at " + position,
-                        Toast.LENGTH_SHORT).show();
+                MovieDetail movieDetail=movieGridAdapter.getItem(position);
+                Intent intent = new Intent(getActivity(), DetailActivity.class);
+                intent.putExtra("movieDetailObj",movieDetail);
+                Log.d(LOG_TAG, String.valueOf("started-intent: "));
+
+                startActivity(intent);
             }
         });
         return rootView;

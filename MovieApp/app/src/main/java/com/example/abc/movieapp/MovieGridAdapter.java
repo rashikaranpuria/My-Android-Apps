@@ -33,7 +33,7 @@ public class MovieGridAdapter extends ArrayAdapter<MovieDetail> {
         if (convertView == null) {
             imageView = new ImageView(context);
             imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
-            imageView.setPadding(8, 8, 8, 8);
+            //imageView.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
         }
         else {
             imageView = (ImageView) convertView;
