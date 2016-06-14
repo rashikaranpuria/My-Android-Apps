@@ -1,7 +1,10 @@
-package com.example.abc.movieapp;
+package com.example.abc.movieapp.activity;
 
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+
+import com.example.abc.movieapp.R;
+import com.example.abc.movieapp.fragment.DetailActivityFragment;
 
 import butterknife.ButterKnife;
 

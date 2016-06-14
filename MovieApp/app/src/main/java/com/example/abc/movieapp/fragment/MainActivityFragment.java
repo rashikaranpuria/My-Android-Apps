@@ -1,4 +1,4 @@
-package com.example.abc.movieapp;
+package com.example.abc.movieapp.fragment;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -13,6 +13,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.GridView;
+
+import com.example.abc.movieapp.BuildConfig;
+import com.example.abc.movieapp.MovieDetail;
+import com.example.abc.movieapp.R;
+import com.example.abc.movieapp.activity.DetailActivity;
+import com.example.abc.movieapp.adapter.MovieGridAdapter;
 
 import org.json.JSONArray;
 import org.json.JSONException;

@@ -1,4 +1,4 @@
-package com.example.abc.movieapp;
+package com.example.abc.movieapp.activity;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -6,6 +6,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+
+import com.example.abc.movieapp.R;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;

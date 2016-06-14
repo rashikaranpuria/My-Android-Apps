@@ -3,7 +3,7 @@
     android:id="@+id/container"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.example.abc.movieapp.DetailActivity"
+    tools:context=".activity.DetailActivity"
     tools:ignore="MergeRootFrame">
 
     <android.support.v7.widget.Toolbar android:id="@+id/my_toolbar"

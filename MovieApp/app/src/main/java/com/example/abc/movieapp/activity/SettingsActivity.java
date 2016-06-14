@@ -1,10 +1,12 @@
-package com.example.abc.movieapp;
+package com.example.abc.movieapp.activity;
 
 import android.os.Bundle;
 import android.preference.ListPreference;
 import android.preference.Preference;
 import android.preference.PreferenceActivity;
 import android.preference.PreferenceManager;
+
+import com.example.abc.movieapp.R;
 
 /**
  * Created by abc on 6/12/16.

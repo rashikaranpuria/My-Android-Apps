@@ -4,7 +4,7 @@
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
     android:background="#000"
-    tools:context="com.example.abc.movieapp.MainActivityFragment"
+    tools:context="com.example.abc.movieapp.fragment.MainActivityFragment"
     tools:showIn="@layout/activity_main"
     android:orientation="horizontal">
     <GridView

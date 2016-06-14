@@ -1,4 +1,4 @@
-package com.example.abc.movieapp;
+package com.example.abc.movieapp.fragment;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -9,6 +9,8 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.example.abc.movieapp.MovieDetail;
+import com.example.abc.movieapp.R;
 import com.squareup.picasso.Picasso;
 
 import butterknife.BindView;

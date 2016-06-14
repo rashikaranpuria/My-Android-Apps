@@ -6,7 +6,7 @@
         xmlns:tools="http://schemas.android.com/tools"
         android:orientation="vertical" android:layout_width="match_parent"
         android:layout_height="match_parent"
-        tools:context="com.example.abc.movieapp.DetailActivityFragment"
+        tools:context="com.example.abc.movieapp.fragment.DetailActivityFragment"
         tools:showIn="@layout/movie_detail"
         android:weightSum="1">
 

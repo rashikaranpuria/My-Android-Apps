@@ -1,4 +1,4 @@
-package com.example.abc.movieapp;
+package com.example.abc.movieapp.adapter;
 
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -7,6 +7,8 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 
+import com.example.abc.movieapp.MovieDetail;
+import com.example.abc.movieapp.R;
 import com.squareup.picasso.Picasso;
 
 import java.util.List;
