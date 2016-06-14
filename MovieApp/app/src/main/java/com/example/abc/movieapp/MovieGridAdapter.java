@@ -1,6 +1,7 @@
 package com.example.abc.movieapp;
 
 import android.content.Context;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
@@ -23,17 +24,12 @@ public class MovieGridAdapter extends ArrayAdapter<MovieDetail> {
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-        // Gets the AndroidFlavor object from the ArrayAdapter at the appropriate position
+
         MovieDetail movie = getItem(position);
         ImageView imageView;
-        // Adapters recycle views to AdapterViews.
-        // If this is a new View object we're getting, then inflate the layout.
-        // If not, this view already has the layout inflated from a previous call to getView,
-        // and we modify the View widgets as usual.
+
         if (convertView == null) {
-            imageView = new ImageView(context);
-            imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
-            //imageView.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
+            imageView = (ImageView) LayoutInflater.from(context).inflate(R.layout.poster,parent,false).findViewById(R.id.poster);
         }
         else {
             imageView = (ImageView) convertView;

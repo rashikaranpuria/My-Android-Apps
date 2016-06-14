@@ -26,6 +26,9 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
+
 /**
  * A placeholder fragment containing a simple view.
  */
@@ -36,6 +39,9 @@ public class MainActivityFragment extends Fragment {
     MovieDetail[] movies = {};
     public static final String LOG_TAG=MainActivityFragment.class.getSimpleName();
 
+    @BindView(R.id.gridview)
+    GridView gridview;
+
     public MainActivityFragment() {
     }
 
@@ -44,14 +50,10 @@ public class MainActivityFragment extends Fragment {
                              Bundle savedInstanceState) {
 
         View rootView = inflater.inflate(R.layout.fragment_main, container, false);
+        ButterKnife.bind(this, rootView);
         movieGridAdapter= new MovieGridAdapter(getContext(),new ArrayList<MovieDetail>());
-
         // for detail page another adapter
-
-        GridView gridview = (GridView) rootView.findViewById(R.id.gridview);
         gridview.setAdapter(movieGridAdapter);
-
-
 
         gridview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             public void onItemClick(AdapterView<?> parent, View v,

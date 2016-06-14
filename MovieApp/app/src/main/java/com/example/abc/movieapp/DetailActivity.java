@@ -1,9 +1,11 @@
 package com.example.abc.movieapp;
 
 import android.os.Bundle;
-import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.AppCompatActivity;
 
-public class DetailActivity extends ActionBarActivity {
+import butterknife.ButterKnife;
+
+public class DetailActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -14,6 +16,9 @@ public class DetailActivity extends ActionBarActivity {
                     .add(R.id.container, new DetailActivityFragment())
                     .commit();
         }
+
+        ButterKnife.bind(this);
+
     }
 
 }

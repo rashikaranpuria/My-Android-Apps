@@ -9,4 +9,6 @@
     <string name="pref_sort_label_top_rated">Ratings</string>
     <string name="title_activity_settings">Settings</string>
     <string name="title_activity_detail">DetailActivity</string>
+    <string name="action_details">Movie Detail</string>
+    <string name="action_detail">Movie Detail</string>
 </resources>
