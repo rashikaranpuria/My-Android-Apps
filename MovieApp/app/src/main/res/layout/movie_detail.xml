@@ -6,15 +6,6 @@
     tools:context=".activity.DetailActivity"
     tools:ignore="MergeRootFrame">
 
-    <android.support.v7.widget.Toolbar android:id="@+id/my_toolbar"
-        android:layout_width="match_parent"
-        android:layout_height="?attr/actionBarSize"
-        android:background="@color/slate"
-        android:title="@string/action_detail"
-        android:theme="@style/ThemeOverlay.AppCompat.ActionBar"
-        xmlns:android="http://schemas.android.com/apk/res/android"
-        />
-
 </FrameLayout>
 
 

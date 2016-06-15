@@ -3,7 +3,6 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
-    android:background="#000"
     tools:context="com.example.abc.movieapp.fragment.MainActivityFragment"
     tools:showIn="@layout/activity_main"
     android:orientation="horizontal">
@@ -14,8 +13,6 @@
         android:numColumns="auto_fit"
         android:stretchMode="columnWidth"
         android:gravity="center"
-        android:layout_gravity="center"
-        android:background="#000"
-        android:cacheColorHint="#000">
+        android:layout_gravity="center">
     </GridView>
 </LinearLayout>
