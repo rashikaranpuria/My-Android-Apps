@@ -49,8 +49,6 @@ public class MovieContract {
 
         public static final String COL_VOTE_AVERAGE = "vote_average";
 
-        public static final String COL_TYPE = "type";
-
         public static final String COL_FAVORITE = "favorite";
 
     }
@@ -88,6 +86,7 @@ public class MovieContract {
         public static final String CONTENT_ITEM_TYPE =
                 ContentResolver.CURSOR_ITEM_BASE_TYPE + "/" + CONTENT_AUTHORITY + "/" + PATH_VIDEO;
 
+        public static final String TABLE_NAME = "video";
         public static final String COL_NAME = "name";
         public static final String COL_KEY = "key";
         //foreign key
@@ -104,6 +103,8 @@ public class MovieContract {
         public static final String CONTENT_ITEM_TYPE =
                 ContentResolver.CURSOR_ITEM_BASE_TYPE + "/" + CONTENT_AUTHORITY + "/" + PATH_POPULAR;
 
+        public static final String TABLE_NAME = "popular";
+
         public static final String COL_MOVIE_ID = "movie_id";
     }
 
@@ -117,6 +118,7 @@ public class MovieContract {
         public static final String CONTENT_ITEM_TYPE =
                 ContentResolver.CURSOR_ITEM_BASE_TYPE + "/" + CONTENT_AUTHORITY + "/" + PATH_TOP_RATED;
 
+        public static final String TABLE_NAME = "top_rated";
         public static final String COL_MOVIE_ID = "movie_id";
     }
 }
