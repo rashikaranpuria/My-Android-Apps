@@ -51,6 +51,12 @@ public class MovieContract {
 
         public static final String COL_FAVORITE = "favorite";
 
+        public static Uri buildMovieUri(long id) {
+            return ContentUris.withAppendedId(CONTENT_URI, id);
+        }
+
+//        public static Uri buildMoviewith
+
     }
 
 
@@ -73,6 +79,10 @@ public class MovieContract {
         public static final String COL_AUTHOR = "author";
 
         public static final String COL_CONTENT = "content";
+
+        public static Uri buildReviewUri(long id) {
+            return ContentUris.withAppendedId(CONTENT_URI, id);
+        }
     }
 
     //Contract for Video table
@@ -91,6 +101,10 @@ public class MovieContract {
         public static final String COL_KEY = "key";
         //foreign key
         public static final String COL_MOVIE_ID = "movie_id";
+
+        public static Uri buildVideoUri(long id) {
+            return ContentUris.withAppendedId(CONTENT_URI, id);
+        }
     }
 
     public  static final class PopularEntry implements BaseColumns {
@@ -106,6 +120,10 @@ public class MovieContract {
         public static final String TABLE_NAME = "popular";
 
         public static final String COL_MOVIE_ID = "movie_id";
+
+        public static Uri buildPopularUri(long id) {
+            return ContentUris.withAppendedId(CONTENT_URI, id);
+        }
     }
 
     public  static final class TopRatedEntry implements BaseColumns {
@@ -120,5 +138,9 @@ public class MovieContract {
 
         public static final String TABLE_NAME = "top_rated";
         public static final String COL_MOVIE_ID = "movie_id";
+
+        public static Uri buildTopRatedUri(long id) {
+            return ContentUris.withAppendedId(CONTENT_URI, id);
+        }
     }
 }
