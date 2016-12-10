@@ -4,12 +4,15 @@ import android.content.ContentResolver;
 import android.content.ContentUris;
 import android.net.Uri;
 import android.provider.BaseColumns;
+import android.util.Log;
 
 /**
  * Created by theseus on 4/12/16.
  */
 
 public class MovieContract {
+
+    public static final String LOG_TAG = MovieContract.class.getSimpleName();
 
     public static final String CONTENT_AUTHORITY = "com.example.abc.movieapp";
 
@@ -55,6 +58,11 @@ public class MovieContract {
             return ContentUris.withAppendedId(CONTENT_URI, id);
         }
 
+        public static String getMovieIdFromUri(Uri uri){
+            Log.d(LOG_TAG, "getMovieFromUri: " + uri);
+            return uri.getPathSegments().get(1);
+        }
+
 //        public static Uri buildMoviewith
 
     }
@@ -80,8 +88,13 @@ public class MovieContract {
 
         public static final String COL_CONTENT = "content";
 
-        public static Uri buildReviewUri(long id) {
-            return ContentUris.withAppendedId(CONTENT_URI, id);
+        public static Uri buildUriFromMovieId(long movie_id) {
+            return ContentUris.withAppendedId(CONTENT_URI, movie_id);
+        }
+
+        public static String getMovieIdFromUri(Uri uri){
+            Log.d(LOG_TAG, "getMovieFromReviewUri: " + uri);
+            return uri.getPathSegments().get(1);
         }
     }
 
@@ -102,8 +115,13 @@ public class MovieContract {
         //foreign key
         public static final String COL_MOVIE_ID = "movie_id";
 
-        public static Uri buildVideoUri(long id) {
-            return ContentUris.withAppendedId(CONTENT_URI, id);
+        public static Uri buildUriFromMovieId(long movie_id) {
+            return ContentUris.withAppendedId(CONTENT_URI, movie_id);
+        }
+
+        public static String getMovieIdFromUri(Uri uri){
+            Log.d(LOG_TAG, "getMovieFromReviewUri: " + uri);
+            return uri.getPathSegments().get(1);
         }
     }
 
