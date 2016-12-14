@@ -109,7 +109,7 @@ public class MainActivityFragment extends Fragment {
         private final String LOG_TAG = FetchMoviesTask.class.getSimpleName();
 
 
-        private Vector<ContentValues> getReviews(long movie_id) throws JSONException {
+        private ContentValues[] getReviews(long movie_id) throws JSONException {
             HttpURLConnection urlConnection = null;
             BufferedReader reader = null;
             String ReviewJsonStr = null;
@@ -191,7 +191,109 @@ public class MainActivityFragment extends Fragment {
                 cVReviews.add(reviewValue);
             }
 
-            return cVReviews;
+            if (cVReviews.size()>0){
+                ContentValues[] cVReviewsArray = new ContentValues[cVReviews.size()];
+                cVReviews.toArray(cVReviewsArray);
+                return cVReviewsArray;
+            }
+            else{
+                return null;
+            }
+        }
+
+
+        private ContentValues[] getVideos(long movie_id) throws JSONException {
+            HttpURLConnection urlConnection = null;
+            BufferedReader reader = null;
+            String VideoJsonStr = null;
+
+            try {
+                // Construct the URL for the reviews link of particular movie_id
+                final String BASE_URL = "http://api.themoviedb.org/3/movie/";
+                final String APPID_PARAM = "api_key";
+
+
+                Uri builtUri = Uri.parse(BASE_URL).buildUpon()
+                        .appendPath(Long.toString(movie_id))
+                        .appendPath("videos")
+                        .appendQueryParameter(APPID_PARAM, BuildConfig.THE_MOVIE_DB_API_KEY).build();
+
+                URL url = new URL(builtUri.toString());
+                Log.d(LOG_TAG, String.valueOf(url));
+                // Create the request to MoviedbAPI, and open the connection
+                urlConnection = (HttpURLConnection) url.openConnection();
+                urlConnection.setRequestMethod("GET");
+                urlConnection.connect();
+
+                // Read the input stream into a String
+                InputStream inputStream = urlConnection.getInputStream();
+                StringBuffer buffer = new StringBuffer();
+                if (inputStream == null) {
+                    // Nothing to do.
+                    return null;
+                }
+                reader = new BufferedReader(new InputStreamReader(inputStream));
+
+                String line;
+                while ((line = reader.readLine()) != null) {
+                    // Since it's JSON, adding a newline isn't necessary (it won't affect parsing)
+                    // But it does make debugging a *lot* easier if you print out the completed
+                    // buffer for debugging.
+                    buffer.append(line + "\n");
+                }
+
+                if (buffer.length() == 0) {
+                    // Stream was empty.  No point in parsing.
+                    return null;
+                }
+                Log.d("value of trailers", "movie_id "+ movie_id +String.valueOf(buffer));
+
+                VideoJsonStr = buffer.toString();
+
+            } catch (IOException e) {
+                Log.e(LOG_TAG, "Error ", e);
+                // If the code didn't successfully get the videos data, there's no point in attempting
+                // to parse it.
+                return null;
+            } finally {
+                if (urlConnection != null) {
+                    urlConnection.disconnect();
+                }
+                if (reader != null) {
+                    try {
+                        reader.close();
+                    } catch (final IOException e) {
+                        Log.e(LOG_TAG, "Error closing stream", e);
+                    }
+                }
+            }
+
+            //converting json str to content value now
+
+            JSONObject VideosJson = new JSONObject(VideoJsonStr);
+            JSONArray videosArray = VideosJson.getJSONArray("results");
+
+            Vector <ContentValues> cVVideos = new Vector<ContentValues>(videosArray.length());
+
+            for (int i = 0 ; i < videosArray.length() ; i++) {
+                ContentValues videoValue = new ContentValues();
+                JSONObject video_item = videosArray.getJSONObject(i);
+
+                videoValue.put(VideoEntry.COL_NAME, video_item.getString("name"));
+                videoValue.put(VideoEntry.COL_KEY, video_item.getString("key"));
+                videoValue.put(VideoEntry.COL_MOVIE_ID, Long.toString(movie_id));
+
+                cVVideos.add(videoValue);
+            }
+
+            if (cVVideos.size()>0){
+                ContentValues[] cVVideosArray = new ContentValues[cVVideos.size()];
+                cVVideos.toArray(cVVideosArray);
+                return cVVideosArray;
+            }
+            else{
+                return null;
+            }
         }
         /**
          * Take the String representing the complete forecast in JSON Format and
@@ -244,15 +346,33 @@ public class MainActivityFragment extends Fragment {
 
                 cVVectorSort.add(sortValues);
 
+                // try catch block for fetching and storing reviews related to this movie
                 try {
-                    Vector cVReviews = getReviews(Long.parseLong(movie_item.getString("id")));
+                    ContentValues[] cVReviews = getReviews(Long.parseLong(movie_item.getString("id")));
                     // change vector to array
-                    if ( cVReviews.size() > 0 ) {
-                        ContentValues[] cVReviewsArray = new ContentValues[cVReviews.size()];
-                        cVReviews.toArray(cVReviewsArray);
-                        int review_insert = getContext().getContentResolver().bulkInsert(ReviewEntry.CONTENT_URI, cVReviewsArray);
+                    if ( cVReviews != null) {
+                        int review_insert = getContext().getContentResolver().bulkInsert(ReviewEntry.CONTENT_URI, cVReviews);
                         Log.d(LOG_TAG, "Fetch Reviews Complete. " + review_insert + " Inserted");
 
+                    }
+                    else{
+                        Log.d(LOG_TAG, "Fetch Reviews empty. 0 " + " Inserted");
+                    }
+                } catch (JSONException e) {
+                    Log.e(LOG_TAG, e.getMessage(), e);
+                    e.printStackTrace();
+                }
+
+                // try catch block to fetch and store videos related to this movie
+                try {
+                    ContentValues[] cVVideos = getVideos(Long.parseLong(movie_item.getString("id")));
+                    // check if array is not null
+                    if ( cVVideos != null) {
+                        int video_insert = getContext().getContentResolver().bulkInsert(VideoEntry.CONTENT_URI, cVVideos);
+                        Log.d(LOG_TAG, "Fetch Videos Complete. " + video_insert + " Inserted");
+                    }
+                    else{
+                        Log.d(LOG_TAG, "Fetch Videos empty. 0 " + " Inserted");
                     }
                 } catch (JSONException e) {
                     Log.e(LOG_TAG, e.getMessage(), e);
