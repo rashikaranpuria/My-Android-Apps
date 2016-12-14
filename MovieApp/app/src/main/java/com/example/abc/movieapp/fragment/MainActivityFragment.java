@@ -1,5 +1,6 @@
 package com.example.abc.movieapp.fragment;
 
+import android.content.ContentValues;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
@@ -19,6 +20,7 @@ import com.example.abc.movieapp.MovieDetail;
 import com.example.abc.movieapp.R;
 import com.example.abc.movieapp.activity.DetailActivity;
 import com.example.abc.movieapp.adapter.MovieGridAdapter;
+import com.example.abc.movieapp.data.MovieContract;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -31,9 +33,11 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Vector;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import com.example.abc.movieapp.data.MovieContract.*;
 
 /**
  * A placeholder fragment containing a simple view.
@@ -87,6 +91,14 @@ public class MainActivityFragment extends Fragment {
         movieTask.execute(sort);
     }
 
+    private String getSort() {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
+        String sort = prefs.getString(getString(R.string.pref_sort_key),
+                getString(R.string.pref_sort_popular));
+        Log.d("Type of sort function ",sort);
+        return sort;
+    }
+
     @Override
     public void onStart() {
         super.onStart();
@@ -110,9 +122,16 @@ public class MainActivityFragment extends Fragment {
             JSONObject MovieJson = new JSONObject(MovieJsonStr);
             JSONArray movieArray = MovieJson.getJSONArray("results");
 
+            Vector<ContentValues> cVVector = new Vector<ContentValues>(movieArray.length());
+
+            Vector<ContentValues> cVVectorSort = new Vector<ContentValues>(movieArray.length());
+
             MovieDetail[] resultStrs = new MovieDetail[movieArray.length()];
 
             for(int i = 0; i < movieArray.length(); i++) {
+
+                ContentValues movieValues = new ContentValues();
+                ContentValues sortValues = new ContentValues();
 
                 JSONObject movie_item = movieArray.getJSONObject(i);
                 resultStrs[i] = new MovieDetail();
@@ -123,7 +142,44 @@ public class MainActivityFragment extends Fragment {
                 resultStrs[i].title = movie_item.getString("title");
                 resultStrs[i].vote_average = movie_item.getString("vote_average");
 
+                movieValues.put(MovieEntry.COL_POSTER_PATH, movie_item.getString("poster_path"));
+                movieValues.put(MovieEntry.COL_OVERVIEW, movie_item.getString("overview"));
+                movieValues.put(MovieEntry.COL_RELEASE_DATE, movie_item.getString("release_date"));
+                movieValues.put(MovieEntry.COL_MOVIE_ID, movie_item.getString("id"));
+                movieValues.put(MovieEntry.COL_TITLE, movie_item.getString("title"));
+                movieValues.put(MovieEntry.COL_VOTE_AVERAGE, movie_item.getString("vote_average"));
+
+                cVVector.add(movieValues);
+
+                if(getSort() == "popular"){
+                    sortValues.put(PopularEntry.COL_MOVIE_ID, movie_item.getString("id"));
+                }
+                else{
+                    sortValues.put(TopRatedEntry.COL_MOVIE_ID, movie_item.getString("id"));
+                }
+
+
+                cVVectorSort.add(sortValues);
+
             }
+            int inserted = 0;
+            int insertedSort = 0;
+            if ( cVVector.size() > 0 ) {
+                ContentValues[] cvArray = new ContentValues[cVVector.size()];
+                ContentValues[] cvArraySort = new ContentValues[cVVectorSort.size()];
+                cVVector.toArray(cvArray);
+                cVVectorSort.toArray(cvArraySort);
+                inserted = getContext().getContentResolver().bulkInsert(MovieEntry.CONTENT_URI, cvArray);
+                if(getSort() == "popular"){
+                    insertedSort = getContext().getContentResolver().bulkInsert(PopularEntry.CONTENT_URI, cvArraySort);
+                }
+                else
+                {
+                    insertedSort = getContext().getContentResolver().bulkInsert(TopRatedEntry.CONTENT_URI, cvArraySort);
+                }
+            }
+
+            Log.d(LOG_TAG, "FetchWeatherTask Complete. " + inserted + " Inserted" + insertedSort + "Inserted Sort");
 
             return resultStrs;
 

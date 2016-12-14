@@ -58,9 +58,9 @@ public class MovieContract {
             return ContentUris.withAppendedId(CONTENT_URI, id);
         }
 
-        public static String getMovieIdFromUri(Uri uri){
-            Log.d(LOG_TAG, "getMovieFromUri: " + uri);
-            return uri.getPathSegments().get(1);
+        public static Long getMovieIdFromUri(Uri uri){
+            Log.d(LOG_TAG, "getMovieIdFromUri: " + uri);
+            return Long.parseLong(uri.getPathSegments().get(1));
         }
 
 //        public static Uri buildMoviewith
@@ -88,13 +88,13 @@ public class MovieContract {
 
         public static final String COL_CONTENT = "content";
 
-        public static Uri buildUriFromMovieId(long movie_id) {
-            return ContentUris.withAppendedId(CONTENT_URI, movie_id);
+        public static Uri buildReviewUri(long id) {
+            return ContentUris.withAppendedId(CONTENT_URI, id);
         }
 
-        public static String getMovieIdFromUri(Uri uri){
+        public static Long getMovieIdFromUri(Uri uri){
             Log.d(LOG_TAG, "getMovieFromReviewUri: " + uri);
-            return uri.getPathSegments().get(1);
+            return Long.parseLong(uri.getPathSegments().get(1));
         }
     }
 
@@ -115,13 +115,13 @@ public class MovieContract {
         //foreign key
         public static final String COL_MOVIE_ID = "movie_id";
 
-        public static Uri buildUriFromMovieId(long movie_id) {
-            return ContentUris.withAppendedId(CONTENT_URI, movie_id);
+        public static Uri buildVideoUri(long id) {
+            return ContentUris.withAppendedId(CONTENT_URI, id);
         }
 
-        public static String getMovieIdFromUri(Uri uri){
-            Log.d(LOG_TAG, "getMovieFromReviewUri: " + uri);
-            return uri.getPathSegments().get(1);
+        public static Long getMovieIdFromUri(Uri uri){
+            Log.d(LOG_TAG, "getMovieFromVideoUri: " + uri);
+            return Long.parseLong(uri.getPathSegments().get(1));
         }
     }
 
@@ -142,6 +142,11 @@ public class MovieContract {
         public static Uri buildPopularUri(long id) {
             return ContentUris.withAppendedId(CONTENT_URI, id);
         }
+
+        public static Long getMovieIdFromUri(Uri uri){
+            Log.d(LOG_TAG, "getMovieFromVideoUri: " + uri);
+            return Long.parseLong(uri.getPathSegments().get(1));
+        }
     }
 
     public  static final class TopRatedEntry implements BaseColumns {
@@ -159,6 +164,11 @@ public class MovieContract {
 
         public static Uri buildTopRatedUri(long id) {
             return ContentUris.withAppendedId(CONTENT_URI, id);
+        }
+
+        public static Long getMovieIdFromUri(Uri uri){
+            Log.d(LOG_TAG, "getMovieFromVideoUri: " + uri);
+            return Long.parseLong(uri.getPathSegments().get(1));
         }
     }
 }
