@@ -20,7 +20,6 @@ import com.example.abc.movieapp.MovieDetail;
 import com.example.abc.movieapp.R;
 import com.example.abc.movieapp.activity.DetailActivity;
 import com.example.abc.movieapp.adapter.MovieGridAdapter;
-import com.example.abc.movieapp.data.MovieContract;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -82,7 +81,7 @@ public class MainActivityFragment extends Fragment {
     private void updateView() {
 
         FetchMoviesTask movieTask = new FetchMoviesTask();
-        //here you fetch prefrence and send in to update
+        //here you fetch preference and send in to update
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
         String sort = prefs.getString(getString(R.string.pref_sort_key),
                 getString(R.string.pref_sort_popular));
@@ -109,6 +108,91 @@ public class MainActivityFragment extends Fragment {
 
         private final String LOG_TAG = FetchMoviesTask.class.getSimpleName();
 
+
+        private Vector<ContentValues> getReviews(long movie_id) throws JSONException {
+            HttpURLConnection urlConnection = null;
+            BufferedReader reader = null;
+            String ReviewJsonStr = null;
+
+            try {
+                // Construct the URL for the reviews link of particular movie_id
+                final String BASE_URL = "http://api.themoviedb.org/3/movie/";
+                final String APPID_PARAM = "api_key";
+
+
+                Uri builtUri = Uri.parse(BASE_URL).buildUpon()
+                                .appendPath(Long.toString(movie_id))
+                                .appendPath("reviews")
+                                .appendQueryParameter(APPID_PARAM, BuildConfig.THE_MOVIE_DB_API_KEY).build();
+
+                URL url = new URL(builtUri.toString());
+                Log.d(LOG_TAG, String.valueOf(url));
+                // Create the request to MoviedbAPI, and open the connection
+                urlConnection = (HttpURLConnection) url.openConnection();
+                urlConnection.setRequestMethod("GET");
+                urlConnection.connect();
+
+                // Read the input stream into a String
+                InputStream inputStream = urlConnection.getInputStream();
+                StringBuffer buffer = new StringBuffer();
+                if (inputStream == null) {
+                    // Nothing to do.
+                    return null;
+                }
+                reader = new BufferedReader(new InputStreamReader(inputStream));
+
+                String line;
+                while ((line = reader.readLine()) != null) {
+                    // Since it's JSON, adding a newline isn't necessary (it won't affect parsing)
+                    // But it does make debugging a *lot* easier if you print out the completed
+                    // buffer for debugging.
+                    buffer.append(line + "\n");
+                }
+
+                if (buffer.length() == 0) {
+                    // Stream was empty.  No point in parsing.
+                    return null;
+                }
+                ReviewJsonStr = buffer.toString();
+
+            } catch (IOException e) {
+                Log.e(LOG_TAG, "Error ", e);
+                // If the code didn't successfully get the reviews data, there's no point in attempting
+                // to parse it.
+                return null;
+            } finally {
+                if (urlConnection != null) {
+                    urlConnection.disconnect();
+                }
+                if (reader != null) {
+                    try {
+                        reader.close();
+                    } catch (final IOException e) {
+                        Log.e(LOG_TAG, "Error closing stream", e);
+                    }
+                }
+            }
+
+            //converting jsonstr to content value now
+
+            JSONObject ReviewJson = new JSONObject(ReviewJsonStr);
+            JSONArray reviewArray = ReviewJson.getJSONArray("results");
+
+            Vector <ContentValues> cVReviews = new Vector<ContentValues>(reviewArray.length());
+
+            for (int i=0;i<reviewArray.length();i++) {
+                ContentValues reviewValue = new ContentValues();
+                JSONObject review_item = reviewArray.getJSONObject(i);
+
+                reviewValue.put(ReviewEntry.COL_AUTHOR, review_item.getString("author"));
+                reviewValue.put(ReviewEntry.COL_CONTENT, review_item.getString("content"));
+                reviewValue.put(ReviewEntry.COL_MOVIE_ID, Long.toString(movie_id));
+
+                cVReviews.add(reviewValue);
+            }
+
+            return cVReviews;
+        }
         /**
          * Take the String representing the complete forecast in JSON Format and
          * pull out the data we need to construct the Strings needed for the wireframes.
@@ -158,8 +242,22 @@ public class MainActivityFragment extends Fragment {
                     sortValues.put(TopRatedEntry.COL_MOVIE_ID, movie_item.getString("id"));
                 }
 
-
                 cVVectorSort.add(sortValues);
+
+                try {
+                    Vector cVReviews = getReviews(Long.parseLong(movie_item.getString("id")));
+                    // change vector to array
+                    if ( cVReviews.size() > 0 ) {
+                        ContentValues[] cVReviewsArray = new ContentValues[cVReviews.size()];
+                        cVReviews.toArray(cVReviewsArray);
+                        int review_insert = getContext().getContentResolver().bulkInsert(ReviewEntry.CONTENT_URI, cVReviewsArray);
+                        Log.d(LOG_TAG, "Fetch Reviews Complete. " + review_insert + " Inserted");
+
+                    }
+                } catch (JSONException e) {
+                    Log.e(LOG_TAG, e.getMessage(), e);
+                    e.printStackTrace();
+                }
 
             }
             int inserted = 0;
