@@ -3,11 +3,15 @@ package com.example.abc.movieapp.fragment;
 import android.content.ContentValues;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.database.Cursor;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.LoaderManager;
+import android.support.v4.content.CursorLoader;
+import android.support.v4.content.Loader;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -19,6 +23,7 @@ import com.example.abc.movieapp.BuildConfig;
 import com.example.abc.movieapp.MovieDetail;
 import com.example.abc.movieapp.R;
 import com.example.abc.movieapp.activity.DetailActivity;
+import com.example.abc.movieapp.adapter.MovieAdapter;
 import com.example.abc.movieapp.adapter.MovieGridAdapter;
 
 import org.json.JSONArray;
@@ -36,20 +41,41 @@ import java.util.Vector;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+
+import com.example.abc.movieapp.data.MovieContract;
 import com.example.abc.movieapp.data.MovieContract.*;
 
 /**
  * A placeholder fragment containing a simple view.
  */
-public class MainActivityFragment extends Fragment {
+public class MainActivityFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor>  {
 
     private MovieGridAdapter movieGridAdapter;
+    private MovieAdapter movieAdapter;
 
     MovieDetail[] movies = {};
-    public static final String LOG_TAG=MainActivityFragment.class.getSimpleName();
+    public static final String LOG_TAG = MainActivityFragment.class.getSimpleName();
+
+    private static final int MOVIE_LOADER = 0;
 
     @BindView(R.id.gridview)
     GridView gridview;
+
+
+    static final String[] movieProjections={
+            MovieContract.MovieEntry.TABLE_NAME+"."+MovieContract.MovieEntry._ID,
+            MovieContract.MovieEntry.TABLE_NAME+"."+ MovieEntry.COL_MOVIE_ID,
+            MovieEntry.COL_TITLE,
+            MovieEntry.COL_OVERVIEW,
+            MovieEntry.COL_VOTE_AVERAGE,
+            MovieEntry.COL_RELEASE_DATE,
+            MovieEntry.COL_POSTER_PATH};
+    static final int COL_MOVIE_ID=1;
+    static final int COL_TITLE=2;
+    static final int COL_OVERVIEW=3;
+    static final int COL_VOTE_AVERAGE=4;
+    static final int COL_RELEASE_DATE=5;
+    static final int COL_POSTER_PATH=6;
 
     public MainActivityFragment() {
     }
@@ -60,7 +86,8 @@ public class MainActivityFragment extends Fragment {
 
         View rootView = inflater.inflate(R.layout.fragment_main, container, false);
         ButterKnife.bind(this, rootView);
-        movieGridAdapter= new MovieGridAdapter(getContext(),new ArrayList<MovieDetail>());
+//        movieGridAdapter= new MovieGridAdapter(getContext(),new ArrayList<MovieDetail>());
+        movieAdapter = new MovieAdapter(getContext(), null, 0);
         // for detail page another adapter
         gridview.setAdapter(movieGridAdapter);
 
@@ -76,6 +103,12 @@ public class MainActivityFragment extends Fragment {
             }
         });
         return rootView;
+    }
+
+    @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+        getLoaderManager().initLoader(MOVIE_LOADER, null, this);
+        super.onActivityCreated(savedInstanceState);
     }
 
     private void updateView() {
@@ -102,6 +135,35 @@ public class MainActivityFragment extends Fragment {
     public void onStart() {
         super.onStart();
         updateView();
+    }
+
+    @Override
+    public Loader<Cursor> onCreateLoader(int id, Bundle args) {
+        String sort = getSort();
+        Uri movieWithsort;
+        if(sort == "popular"){
+            movieWithsort = PopularEntry.CONTENT_URI;
+        }
+        else{
+            movieWithsort = TopRatedEntry.CONTENT_URI;
+        }
+
+        return new CursorLoader(getActivity(),
+                movieWithsort,
+                movieProjections,
+                null,
+                null,
+                null);
+    }
+
+    @Override
+    public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
+        movieAdapter.swapCursor(data);
+    }
+
+    @Override
+    public void onLoaderReset(Loader<Cursor> loader) {
+        movieAdapter.swapCursor(null);
     }
 
     public class FetchMoviesTask extends AsyncTask<String, Void, MovieDetail[]> {
