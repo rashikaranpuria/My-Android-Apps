@@ -88,20 +88,20 @@ public class MainActivityFragment extends Fragment implements LoaderManager.Load
         ButterKnife.bind(this, rootView);
 //        movieGridAdapter= new MovieGridAdapter(getContext(),new ArrayList<MovieDetail>());
         //get data to populate
-        String sort = getSort();
-        Uri movieWithSort = null;
-        if(sort.equals("popular")){
-            movieWithSort = PopularEntry.CONTENT_URI;
-        }
-        else{
-            movieWithSort = TopRatedEntry.CONTENT_URI;
-        }
+//        String sort = getSort();
+//        Uri movieWithSort = null;
+//        if(sort.equals("popular")){
+//            movieWithSort = PopularEntry.CONTENT_URI;
+//        }
+//        else{
+//            movieWithSort = TopRatedEntry.CONTENT_URI;
+//        }
 
 
-        Cursor cur = getActivity().getContentResolver().query(movieWithSort,
-                null, null, null, null);
+//        Cursor cur = getActivity().getContentResolver().query(movieWithSort,
+//                movieProjections, null, null, null);
 
-        Log.d(LOG_TAG, "cursor data" + cur.getColumnNames()[3]);
+//        Log.d(LOG_TAG, "cursor data" + cur.getString(3));
 
         movieAdapter = new MovieAdapter(getContext(), null, 0);
 
@@ -126,6 +126,13 @@ public class MainActivityFragment extends Fragment implements LoaderManager.Load
     public void onActivityCreated(Bundle savedInstanceState) {
         getLoaderManager().initLoader(MOVIE_LOADER, null, this);
         super.onActivityCreated(savedInstanceState);
+    }
+
+    public void restartLoader(){
+        Log.d(LOG_TAG,"reinitialized");
+
+        getLoaderManager().restartLoader(MOVIE_LOADER, null, this);
+
     }
 
     private void updateView() {
@@ -176,11 +183,13 @@ public class MainActivityFragment extends Fragment implements LoaderManager.Load
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
         movieAdapter.swapCursor(data);
+        movieAdapter.notifyDataSetChanged();
     }
 
     @Override
     public void onLoaderReset(Loader<Cursor> loader) {
         movieAdapter.swapCursor(null);
+
     }
 
     public class FetchMoviesTask extends AsyncTask<String, Void, Void> {
