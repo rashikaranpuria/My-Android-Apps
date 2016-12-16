@@ -223,7 +223,7 @@ public class MovieProvider extends ContentProvider {
                         null,
                         null,
                         sortOrder);
-                Log.d(LOG_TAG, "in query case top rate " + projection[2]);
+                Log.d(LOG_TAG, "in query case top rate " + projection[2] + " " + retCursor.getCount());
                 break;
             }
             case TOP_RATED_WITH_ID:{
@@ -323,6 +323,7 @@ public class MovieProvider extends ContentProvider {
 
         switch (match){
             case MOVIES:
+                Log.d(LOG_TAG, "Movies as getType");
                 return MovieContract.MovieEntry.CONTENT_TYPE;
             case MOVIE_WITH_ID:
                 return MovieContract.MovieEntry.CONTENT_ITEM_TYPE;
@@ -358,6 +359,14 @@ public class MovieProvider extends ContentProvider {
         Uri returnUri;
 
         switch (match){
+            case MOVIES: {
+                long _id = db.insert(MovieContract.MovieEntry.TABLE_NAME, null, contentValues);
+                if (_id > 0)
+                    returnUri = MovieContract.MovieEntry.buildMovieUri(_id);
+                else
+                    throw new android.database.SQLException("Failed to insert row into " + uri);
+                break;
+            }
             case POPULAR:{
                 long _id = db.insert(MovieContract.PopularEntry.TABLE_NAME, null, contentValues);
                 if ( _id > 0 )
@@ -515,6 +524,7 @@ public class MovieProvider extends ContentProvider {
                             returnCount++;
                         }
                     }
+                    Log.d(LOG_TAG, " rows inserted " + returnCount + values[0].getAsString(MovieContract.MovieEntry.COL_TITLE));
                 } finally {
                     db.endTransaction();
                 }

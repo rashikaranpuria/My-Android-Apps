@@ -9,13 +9,13 @@ import com.example.abc.movieapp.data.MovieContract.*;
 import static android.os.Build.VERSION_CODES.M;
 
 /**
- * Created by theseus on 4/12/16.
+ * Created by rashi on 4/12/16.
  */
 
 public class MovieDBHelper extends SQLiteOpenHelper {
 
     // If you change the database schema, you must increment the database version.
-    private static final int DATABASE_VERSION = 2;
+    private static final int DATABASE_VERSION = 1;
 
     static final String DATABASE_NAME = "movie.db";
 
@@ -27,7 +27,7 @@ public class MovieDBHelper extends SQLiteOpenHelper {
     public void onCreate(SQLiteDatabase sqLiteDatabase) {
 
         final String SQL_CREATE_MOVIE_TABLE = "CREATE TABLE " + MovieEntry.TABLE_NAME + " ( " +
-                MovieEntry._ID + " INTEGER PRIMARY KEY," +
+                MovieEntry._ID + " INTEGER PRIMARY KEY, " +
                 MovieEntry.COL_MOVIE_ID + " TEXT UNIQUE NOT NULL, " +
                 MovieEntry.COL_TITLE + " TEXT NOT NULL, " +
                 MovieEntry.COL_POSTER_PATH + " TEXT NOT NULL, " +
@@ -45,30 +45,30 @@ public class MovieDBHelper extends SQLiteOpenHelper {
                 " FOREIGN KEY ( " + ReviewEntry.COL_MOVIE_ID + " ) REFERENCES " +
                 MovieEntry.TABLE_NAME + " ( " + MovieEntry._ID + "), " +
                 " UNIQUE ( " + ReviewEntry.COL_MOVIE_ID + ", " +
-                ReviewEntry.COL_AUTHOR + ", " + ReviewEntry.COL_AUTHOR + " ) ON CONFLICT REPLACE);";
+                ReviewEntry.COL_AUTHOR + " ) ON CONFLICT REPLACE);";
 
         final String SQL_CREATE_VIDEO_TABLE = "CREATE TABLE " + VideoEntry.TABLE_NAME + " ( " +
                 VideoEntry._ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
                 VideoEntry.COL_NAME + " TEXT NOT NULL, " +
-                VideoEntry.COL_KEY + " TEXT UNIQUE NOT NULL, " +
+                VideoEntry.COL_KEY + " TEXT NOT NULL, " +
                 VideoEntry.COL_MOVIE_ID + " INTEGER NOT NULL, " +
                 " FOREIGN KEY ( " + VideoEntry.COL_MOVIE_ID + " ) REFERENCES " +
-                MovieEntry.TABLE_NAME + " (" + MovieEntry._ID + ") " +
-                ");";
+                MovieEntry.TABLE_NAME + " (" + MovieEntry._ID + "), " +
+                " UNIQUE ( " + VideoEntry.COL_KEY + " ) ON CONFLICT REPLACE);";
 
         final String SQL_CREATE_TOP_RATED_TABLE = "CREATE TABLE " + TopRatedEntry.TABLE_NAME + " ( " +
                 TopRatedEntry._ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
                 TopRatedEntry.COL_MOVIE_ID + " INTEGER UNIQUE NOT NULL, " +
                 " FOREIGN KEY ( " + TopRatedEntry.COL_MOVIE_ID + " ) REFERENCES " +
-                MovieEntry.TABLE_NAME + " (" + MovieEntry._ID + ") " +
-                ");";
+                MovieEntry.TABLE_NAME + " (" + MovieEntry._ID + "), " +
+                " UNIQUE ( " + TopRatedEntry.COL_MOVIE_ID + " ) ON CONFLICT REPLACE);";
 
         final String SQL_CREATE_POPULAR_TABLE = "CREATE TABLE " + PopularEntry.TABLE_NAME + " ( " +
                 PopularEntry._ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
                 PopularEntry.COL_MOVIE_ID + " INTEGER UNIQUE NOT NULL, " +
                 " FOREIGN KEY ( " + PopularEntry.COL_MOVIE_ID + " ) REFERENCES " +
-                MovieEntry.TABLE_NAME + " (" + MovieEntry._ID + ") " +
-                ");";
+                MovieEntry.TABLE_NAME + " (" + MovieEntry._ID + "), " +
+                " UNIQUE ( " + PopularEntry.COL_MOVIE_ID + " ) ON CONFLICT REPLACE);";
 
         sqLiteDatabase.execSQL(SQL_CREATE_MOVIE_TABLE);
         sqLiteDatabase.execSQL(SQL_CREATE_REVIEW_TABLE);
@@ -92,4 +92,5 @@ public class MovieDBHelper extends SQLiteOpenHelper {
         sqLiteDatabase.execSQL("DROP TABLE IF EXISTS " + MovieEntry.TABLE_NAME);
         onCreate(sqLiteDatabase);
     }
+
 }

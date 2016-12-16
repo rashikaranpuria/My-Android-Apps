@@ -423,6 +423,8 @@ public class MainActivityFragment extends Fragment implements LoaderManager.Load
                 movieValues.put(MovieEntry.COL_TITLE, movie_item.getString("title"));
                 movieValues.put(MovieEntry.COL_VOTE_AVERAGE, movie_item.getString("vote_average"));
 
+                Log.d(LOG_TAG, "movieValues" + movieValues.getAsString(MovieEntry.COL_TITLE));
+
                 cVVector.add(movieValues);
 
                 if(getSort().equals("popular")){
