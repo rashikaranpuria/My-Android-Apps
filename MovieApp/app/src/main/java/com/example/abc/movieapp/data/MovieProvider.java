@@ -68,12 +68,12 @@ public class MovieProvider extends ContentProvider {
 
         popularMoviesQueryBuilder = new SQLiteQueryBuilder();
         popularMoviesQueryBuilder.setTables(
-                MovieContract.PopularEntry.TABLE_NAME + " INNER JOIN " +
-                        MovieContract.MovieEntry.TABLE_NAME +
-                        " ON " + MovieContract.PopularEntry.TABLE_NAME +
-                        "." + MovieContract.PopularEntry.COL_MOVIE_ID +
-                        " = " + MovieContract.MovieEntry.TABLE_NAME +
-                        "." + MovieContract.MovieEntry.COL_MOVIE_ID);
+                MovieContract.MovieEntry.TABLE_NAME + " INNER JOIN " +
+                        MovieContract.PopularEntry.TABLE_NAME +
+                        " ON " + MovieContract.MovieEntry.TABLE_NAME +
+                        "." + MovieContract.MovieEntry.COL_MOVIE_ID +
+                        " = " + MovieContract.PopularEntry.TABLE_NAME +
+                        "." + MovieContract.PopularEntry.COL_MOVIE_ID);
 
         topRatedMoviesQueryBuilder = new SQLiteQueryBuilder();
         topRatedMoviesQueryBuilder.setTables(
@@ -204,11 +204,12 @@ public class MovieProvider extends ContentProvider {
                         null,
                         null,
                         sortOrder);
-                Log.d("movieprovider", "in query case popular");
+                Log.d("movieprovider", "in query case popular " + projection[3] + " " + retCursor.getCount());
                 break;
             }
             case POPULAR_WITH_ID:{
                 retCursor = getPopularWithId(uri, projection, sortOrder);
+                Log.d("movieprovider", "in query case popular with id " + projection.length);
                 break;
             }
             case TOP_RATED:{
@@ -220,10 +221,12 @@ public class MovieProvider extends ContentProvider {
                         null,
                         null,
                         sortOrder);
+                Log.d("movieprovider", "in query case top rate " + projection[2]);
                 break;
             }
             case TOP_RATED_WITH_ID:{
                 retCursor = getTopRatedWithId(uri, projection, sortOrder);
+                Log.d("movieprovider", "in query case top rated with id " + projection.length);
                 break;
             }
             default:
