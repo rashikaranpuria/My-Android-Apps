@@ -8,6 +8,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteQueryBuilder;
 import android.net.Uri;
 import android.support.annotation.Nullable;
+import android.util.Log;
 
 /**
  * Created by rashi on 11/12/16.
@@ -203,6 +204,7 @@ public class MovieProvider extends ContentProvider {
                         null,
                         null,
                         sortOrder);
+                Log.d("movieprovider", "in query case popular");
                 break;
             }
             case POPULAR_WITH_ID:{
@@ -330,6 +332,7 @@ public class MovieProvider extends ContentProvider {
             case VIDEOS_WITH_ID:
                 return MovieContract.VideoEntry.CONTENT_TYPE;
             case POPULAR:
+                Log.d("MovieProvider", "Popular as getType");
                 return MovieContract.PopularEntry.CONTENT_TYPE;
             case POPULAR_WITH_ID:
                 return MovieContract.PopularEntry.CONTENT_ITEM_TYPE;

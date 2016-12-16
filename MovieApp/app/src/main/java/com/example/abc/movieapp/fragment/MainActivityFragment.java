@@ -50,7 +50,7 @@ import com.example.abc.movieapp.data.MovieContract.*;
  */
 public class MainActivityFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor>  {
 
-    private MovieGridAdapter movieGridAdapter;
+//    private MovieGridAdapter movieGridAdapter;
     private MovieAdapter movieAdapter;
 
     MovieDetail[] movies = {};
@@ -87,21 +87,38 @@ public class MainActivityFragment extends Fragment implements LoaderManager.Load
         View rootView = inflater.inflate(R.layout.fragment_main, container, false);
         ButterKnife.bind(this, rootView);
 //        movieGridAdapter= new MovieGridAdapter(getContext(),new ArrayList<MovieDetail>());
+        //get data to populate
+        String sort = getSort();
+        Uri movieWithSort = null;
+        if(sort == "popular"){
+            movieWithSort = PopularEntry.CONTENT_URI;
+        }
+        else{
+            movieWithSort = TopRatedEntry.CONTENT_URI;
+        }
+
+
+        Cursor cur = getActivity().getContentResolver().query(movieWithSort,
+                null, null, null, null);
+
+        Log.d(LOG_TAG, "cursor data" + cur.getColumnNames()[3]);
+
         movieAdapter = new MovieAdapter(getContext(), null, 0);
+
         // for detail page another adapter
-        gridview.setAdapter(movieGridAdapter);
+        gridview.setAdapter(movieAdapter);
 
-        gridview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            public void onItemClick(AdapterView<?> parent, View v,
-                                    int position, long id) {
-                MovieDetail movieDetail=movieGridAdapter.getItem(position);
-                Intent intent = new Intent(getActivity(), DetailActivity.class);
-                intent.putExtra("movieDetailObj",movieDetail);
-                Log.d(LOG_TAG, String.valueOf("started-intent: "));
-
-                startActivity(intent);
-            }
-        });
+//        gridview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+//            public void onItemClick(AdapterView<?> parent, View v,
+//                                    int position, long id) {
+//                MovieDetail movieDetail=movieGridAdapter.getItem(position);
+//                Intent intent = new Intent(getActivity(), DetailActivity.class);
+//                intent.putExtra("movieDetailObj",movieDetail);
+//                Log.d(LOG_TAG, String.valueOf("started-intent: "));
+//
+//                startActivity(intent);
+//            }
+//        });
         return rootView;
     }
 
@@ -140,16 +157,16 @@ public class MainActivityFragment extends Fragment implements LoaderManager.Load
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
         String sort = getSort();
-        Uri movieWithsort;
+        Uri movieWithSort;
         if(sort == "popular"){
-            movieWithsort = PopularEntry.CONTENT_URI;
+            movieWithSort = PopularEntry.CONTENT_URI;
         }
         else{
-            movieWithsort = TopRatedEntry.CONTENT_URI;
+            movieWithSort = TopRatedEntry.CONTENT_URI;
         }
 
         return new CursorLoader(getActivity(),
-                movieWithsort,
+                movieWithSort,
                 movieProjections,
                 null,
                 null,
@@ -166,7 +183,7 @@ public class MainActivityFragment extends Fragment implements LoaderManager.Load
         movieAdapter.swapCursor(null);
     }
 
-    public class FetchMoviesTask extends AsyncTask<String, Void, MovieDetail[]> {
+    public class FetchMoviesTask extends AsyncTask<String, Void, Void> {
 
         private final String LOG_TAG = FetchMoviesTask.class.getSimpleName();
 
@@ -364,7 +381,7 @@ public class MainActivityFragment extends Fragment implements LoaderManager.Load
          * Fortunately parsing is easy:  constructor takes the JSON string and converts it
          * into an Object hierarchy for us.
          */
-        private MovieDetail[] getMovieDataFromJson(String MovieJsonStr)
+        private void getMovieDataFromJson(String MovieJsonStr)
                 throws JSONException {
 
             JSONObject MovieJson = new JSONObject(MovieJsonStr);
@@ -452,24 +469,26 @@ public class MainActivityFragment extends Fragment implements LoaderManager.Load
                 inserted = getContext().getContentResolver().bulkInsert(MovieEntry.CONTENT_URI, cvArray);
                 if(getSort() == "popular"){
                     insertedSort = getContext().getContentResolver().bulkInsert(PopularEntry.CONTENT_URI, cvArraySort);
+                    Log.d("Mainact", "inserted popular entry "+insertedSort);
                 }
                 else
                 {
                     insertedSort = getContext().getContentResolver().bulkInsert(TopRatedEntry.CONTENT_URI, cvArraySort);
+                    Log.d("Mainact", "inserted top rated entry "+insertedSort);
                 }
             }
 
             Log.d(LOG_TAG, "FetchWeatherTask Complete. " + inserted + " Inserted" + insertedSort + "Inserted Sort");
 
-            return resultStrs;
+//            return resultStrs;
 
         }
         @Override
-        protected MovieDetail[] doInBackground(String... params) {
+        protected Void doInBackground(String... params) {
 
             // If there's no zip code, there's nothing to look up.  Verify size of params.
             if (params.length == 0) {
-                return null;
+//                return null;
             }
 
             String MovieJsonStr = null;
@@ -502,7 +521,7 @@ public class MainActivityFragment extends Fragment implements LoaderManager.Load
                 StringBuffer buffer = new StringBuffer();
                 if (inputStream == null) {
                     // Nothing to do.
-                    return null;
+//                    return null;
                 }
                 reader = new BufferedReader(new InputStreamReader(inputStream));
 
@@ -516,15 +535,22 @@ public class MainActivityFragment extends Fragment implements LoaderManager.Load
 
                 if (buffer.length() == 0) {
                     // Stream was empty.  No point in parsing.
-                    return null;
+//                    return null;
                 }
                 MovieJsonStr = buffer.toString();
+                getMovieDataFromJson(MovieJsonStr);
+
             } catch (IOException e) {
                 Log.e(LOG_TAG, "Error ", e);
                 // If the code didn't successfully get the weather data, there's no point in attemping
                 // to parse it.
-                return null;
-            } finally {
+//                return null;
+            }
+            catch (JSONException e) {
+                Log.e(LOG_TAG, e.getMessage(), e);
+                e.printStackTrace();
+            }
+            finally {
                 if (urlConnection != null) {
                     urlConnection.disconnect();
                 }
@@ -537,29 +563,24 @@ public class MainActivityFragment extends Fragment implements LoaderManager.Load
                 }
             }
 
-            try {
-                return getMovieDataFromJson(MovieJsonStr);
-            } catch (JSONException e) {
-                Log.e(LOG_TAG, e.getMessage(), e);
-                e.printStackTrace();
-            }
+
 
             // This will only happen if there was an error getting or parsing the forecast.
             return null;
         }
 
 
-        @Override
-        protected void onPostExecute(MovieDetail[] result) {
-            movies=result;
-            if (result != null) {
-                movieGridAdapter.clear();
-                for (int i=0;i<result.length;i++){
-                    movieGridAdapter.add(result[i]);
-                }
-            }
-
-        }
+//        @Override
+//        protected void onPostExecute(MovieDetail[] result) {
+//            movies=result;
+//            if (result != null) {
+//                movieAdapter.clear();
+//                for (int i=0;i<result.length;i++){
+//                    movieAdapter.add(result[i]);
+//                }
+//            }
+//
+//        }
     }
 
 }
