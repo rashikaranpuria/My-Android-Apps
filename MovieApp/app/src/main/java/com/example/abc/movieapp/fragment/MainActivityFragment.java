@@ -90,7 +90,7 @@ public class MainActivityFragment extends Fragment implements LoaderManager.Load
         //get data to populate
         String sort = getSort();
         Uri movieWithSort = null;
-        if(sort == "popular"){
+        if(sort.equals("popular")){
             movieWithSort = PopularEntry.CONTENT_URI;
         }
         else{
@@ -158,7 +158,7 @@ public class MainActivityFragment extends Fragment implements LoaderManager.Load
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
         String sort = getSort();
         Uri movieWithSort;
-        if(sort == "popular"){
+        if(sort.equals("popular")){
             movieWithSort = PopularEntry.CONTENT_URI;
         }
         else{
@@ -416,7 +416,7 @@ public class MainActivityFragment extends Fragment implements LoaderManager.Load
 
                 cVVector.add(movieValues);
 
-                if(getSort() == "popular"){
+                if(getSort().equals("popular")){
                     sortValues.put(PopularEntry.COL_MOVIE_ID, movie_item.getString("id"));
                 }
                 else{
@@ -467,14 +467,14 @@ public class MainActivityFragment extends Fragment implements LoaderManager.Load
                 cVVector.toArray(cvArray);
                 cVVectorSort.toArray(cvArraySort);
                 inserted = getContext().getContentResolver().bulkInsert(MovieEntry.CONTENT_URI, cvArray);
-                if(getSort() == "popular"){
+                if(getSort().equals("popular")){
                     insertedSort = getContext().getContentResolver().bulkInsert(PopularEntry.CONTENT_URI, cvArraySort);
                     Log.d("Mainact", "inserted popular entry "+insertedSort);
                 }
                 else
                 {
                     insertedSort = getContext().getContentResolver().bulkInsert(TopRatedEntry.CONTENT_URI, cvArraySort);
-                    Log.d("Mainact", "inserted top rated entry "+insertedSort);
+                    Log.d("Mainact", getSort() + "inserted top rated entry "+insertedSort);
                 }
             }
 
