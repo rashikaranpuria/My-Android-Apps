@@ -142,7 +142,7 @@ public class MainActivityFragment extends Fragment implements LoaderManager.Load
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
         String sort = prefs.getString(getString(R.string.pref_sort_key),
                 getString(R.string.pref_sort_popular));
-        Log.d("Type of sort",sort);
+        Log.d(LOG_TAG, "sort type" + sort);
 
         movieTask.execute(sort);
     }
@@ -151,7 +151,7 @@ public class MainActivityFragment extends Fragment implements LoaderManager.Load
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
         String sort = prefs.getString(getString(R.string.pref_sort_key),
                 getString(R.string.pref_sort_popular));
-        Log.d("Type of sort function ",sort);
+        Log.d(LOG_TAG, "sort type" + sort);
         return sort;
     }
 
@@ -478,12 +478,12 @@ public class MainActivityFragment extends Fragment implements LoaderManager.Load
                 inserted = getContext().getContentResolver().bulkInsert(MovieEntry.CONTENT_URI, cvArray);
                 if(getSort().equals("popular")){
                     insertedSort = getContext().getContentResolver().bulkInsert(PopularEntry.CONTENT_URI, cvArraySort);
-                    Log.d("Mainact", "inserted popular entry "+insertedSort);
+                    Log.d(LOG_TAG, "inserted popular entry "+insertedSort);
                 }
                 else
                 {
                     insertedSort = getContext().getContentResolver().bulkInsert(TopRatedEntry.CONTENT_URI, cvArraySort);
-                    Log.d("Mainact", getSort() + "inserted top rated entry "+insertedSort);
+                    Log.d(LOG_TAG, getSort() + "inserted top rated entry "+insertedSort);
                 }
             }
 
