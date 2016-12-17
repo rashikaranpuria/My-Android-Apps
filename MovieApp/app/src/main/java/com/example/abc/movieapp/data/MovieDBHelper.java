@@ -28,7 +28,7 @@ public class MovieDBHelper extends SQLiteOpenHelper {
 
         final String SQL_CREATE_MOVIE_TABLE = "CREATE TABLE " + MovieEntry.TABLE_NAME + " ( " +
                 MovieEntry._ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
-                MovieEntry.COL_MOVIE_ID + " TEXT UNIQUE NOT NULL, " +
+                MovieEntry.COL_MOVIE_ID + " STRING UNIQUE NOT NULL, " +
                 MovieEntry.COL_TITLE + " TEXT NOT NULL, " +
                 MovieEntry.COL_POSTER_PATH + " TEXT NOT NULL, " +
                 MovieEntry.COL_OVERVIEW + " TEXT NOT NULL, " +
@@ -41,31 +41,31 @@ public class MovieDBHelper extends SQLiteOpenHelper {
                 ReviewEntry._ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
                 ReviewEntry.COL_AUTHOR + " TEXT NOT NULL, " +
                 ReviewEntry.COL_CONTENT + " TEXT NOT NULL, " +
-                ReviewEntry.COL_MOVIE_ID + " INTEGER NOT NULL, " +
+                ReviewEntry.COL_MOVIE_ID+" STRING NOT NULL, "+
                 " FOREIGN KEY ( " + ReviewEntry.COL_MOVIE_ID + " ) REFERENCES " +
                 MovieEntry.TABLE_NAME + " ( " + MovieEntry.COL_MOVIE_ID + "), " +
                 " UNIQUE ( " + ReviewEntry.COL_MOVIE_ID + ", " +
-                ReviewEntry.COL_AUTHOR + " ) ON CONFLICT REPLACE);";
+                ReviewEntry.COL_AUTHOR + ", " + ReviewEntry.COL_CONTENT+" ) ON CONFLICT REPLACE);";
 
         final String SQL_CREATE_VIDEO_TABLE = "CREATE TABLE " + VideoEntry.TABLE_NAME + " ( " +
                 VideoEntry._ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
                 VideoEntry.COL_NAME + " TEXT NOT NULL, " +
                 VideoEntry.COL_KEY + " TEXT NOT NULL, " +
-                VideoEntry.COL_MOVIE_ID + " INTEGER NOT NULL, " +
+                VideoEntry.COL_MOVIE_ID+" STRING NOT NULL, "+
                 " FOREIGN KEY ( " + VideoEntry.COL_MOVIE_ID + " ) REFERENCES " +
                 MovieEntry.TABLE_NAME + " (" + MovieEntry.COL_MOVIE_ID + "), " +
                 " UNIQUE ( " + VideoEntry.COL_KEY + " ) ON CONFLICT REPLACE);";
 
         final String SQL_CREATE_TOP_RATED_TABLE = "CREATE TABLE " + TopRatedEntry.TABLE_NAME + " ( " +
                 TopRatedEntry._ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
-                TopRatedEntry.COL_MOVIE_ID + " INTEGER UNIQUE NOT NULL, " +
+                TopRatedEntry.COL_MOVIE_ID + " STRING UNIQUE NOT NULL, " +
                 " FOREIGN KEY ( " + TopRatedEntry.COL_MOVIE_ID + " ) REFERENCES " +
                 MovieEntry.TABLE_NAME + " (" + MovieEntry.COL_MOVIE_ID + "), " +
                 " UNIQUE ( " + TopRatedEntry.COL_MOVIE_ID + " ) ON CONFLICT REPLACE);";
 
         final String SQL_CREATE_POPULAR_TABLE = "CREATE TABLE " + PopularEntry.TABLE_NAME + " ( " +
                 PopularEntry._ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
-                PopularEntry.COL_MOVIE_ID + " INTEGER UNIQUE NOT NULL, " +
+                PopularEntry.COL_MOVIE_ID + " STRING UNIQUE NOT NULL, " +
                 " FOREIGN KEY ( " + PopularEntry.COL_MOVIE_ID + " ) REFERENCES " +
                 MovieEntry.TABLE_NAME + " (" + MovieEntry.COL_MOVIE_ID + "), " +
                 " UNIQUE ( " + PopularEntry.COL_MOVIE_ID + " ) ON CONFLICT REPLACE);";
