@@ -15,7 +15,7 @@ import static android.os.Build.VERSION_CODES.M;
 public class MovieDBHelper extends SQLiteOpenHelper {
 
     // If you change the database schema, you must increment the database version.
-    private static final int DATABASE_VERSION = 2;
+    private static final int DATABASE_VERSION = 3;
 
     static final String DATABASE_NAME = "movie.db";
 
@@ -43,7 +43,7 @@ public class MovieDBHelper extends SQLiteOpenHelper {
                 ReviewEntry.COL_CONTENT + " TEXT NOT NULL, " +
                 ReviewEntry.COL_MOVIE_ID + " INTEGER NOT NULL, " +
                 " FOREIGN KEY ( " + ReviewEntry.COL_MOVIE_ID + " ) REFERENCES " +
-                MovieEntry.TABLE_NAME + " ( " + MovieEntry._ID + "), " +
+                MovieEntry.TABLE_NAME + " ( " + MovieEntry.COL_MOVIE_ID + "), " +
                 " UNIQUE ( " + ReviewEntry.COL_MOVIE_ID + ", " +
                 ReviewEntry.COL_AUTHOR + " ) ON CONFLICT REPLACE);";
 
@@ -53,21 +53,21 @@ public class MovieDBHelper extends SQLiteOpenHelper {
                 VideoEntry.COL_KEY + " TEXT NOT NULL, " +
                 VideoEntry.COL_MOVIE_ID + " INTEGER NOT NULL, " +
                 " FOREIGN KEY ( " + VideoEntry.COL_MOVIE_ID + " ) REFERENCES " +
-                MovieEntry.TABLE_NAME + " (" + MovieEntry._ID + "), " +
+                MovieEntry.TABLE_NAME + " (" + MovieEntry.COL_MOVIE_ID + "), " +
                 " UNIQUE ( " + VideoEntry.COL_KEY + " ) ON CONFLICT REPLACE);";
 
         final String SQL_CREATE_TOP_RATED_TABLE = "CREATE TABLE " + TopRatedEntry.TABLE_NAME + " ( " +
                 TopRatedEntry._ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
                 TopRatedEntry.COL_MOVIE_ID + " INTEGER UNIQUE NOT NULL, " +
                 " FOREIGN KEY ( " + TopRatedEntry.COL_MOVIE_ID + " ) REFERENCES " +
-                MovieEntry.TABLE_NAME + " (" + MovieEntry._ID + "), " +
+                MovieEntry.TABLE_NAME + " (" + MovieEntry.COL_MOVIE_ID + "), " +
                 " UNIQUE ( " + TopRatedEntry.COL_MOVIE_ID + " ) ON CONFLICT REPLACE);";
 
         final String SQL_CREATE_POPULAR_TABLE = "CREATE TABLE " + PopularEntry.TABLE_NAME + " ( " +
                 PopularEntry._ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
                 PopularEntry.COL_MOVIE_ID + " INTEGER UNIQUE NOT NULL, " +
                 " FOREIGN KEY ( " + PopularEntry.COL_MOVIE_ID + " ) REFERENCES " +
-                MovieEntry.TABLE_NAME + " (" + MovieEntry._ID + "), " +
+                MovieEntry.TABLE_NAME + " (" + MovieEntry.COL_MOVIE_ID + "), " +
                 " UNIQUE ( " + PopularEntry.COL_MOVIE_ID + " ) ON CONFLICT REPLACE);";
 
         sqLiteDatabase.execSQL(SQL_CREATE_MOVIE_TABLE);
