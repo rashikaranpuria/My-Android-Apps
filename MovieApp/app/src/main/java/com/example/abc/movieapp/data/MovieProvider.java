@@ -70,21 +70,21 @@ public class MovieProvider extends ContentProvider {
 
         popularMoviesQueryBuilder = new SQLiteQueryBuilder();
         popularMoviesQueryBuilder.setTables(
-                MovieContract.PopularEntry.TABLE_NAME + " INNER JOIN " +
-                        MovieContract.MovieEntry.TABLE_NAME +
-                        " ON " + MovieContract.PopularEntry.TABLE_NAME +
-                        "." + MovieContract.PopularEntry.COL_MOVIE_ID +
-                        " = " + MovieContract.MovieEntry.TABLE_NAME +
-                        "." + MovieContract.MovieEntry.COL_MOVIE_ID);
+                MovieContract.MovieEntry.TABLE_NAME + " INNER JOIN " +
+                        MovieContract.PopularEntry.TABLE_NAME +
+                        " ON " + MovieContract.MovieEntry.TABLE_NAME +
+                        "." + MovieContract.MovieEntry.COL_MOVIE_ID +
+                        " = " + MovieContract.PopularEntry.TABLE_NAME +
+                        "." + MovieContract.PopularEntry.COL_MOVIE_ID);
 
         topRatedMoviesQueryBuilder = new SQLiteQueryBuilder();
         topRatedMoviesQueryBuilder.setTables(
-                MovieContract.TopRatedEntry.TABLE_NAME + " INNER JOIN " +
-                        MovieContract.MovieEntry.TABLE_NAME +
-                        " ON " + MovieContract.TopRatedEntry.TABLE_NAME +
-                        "." + MovieContract.TopRatedEntry.COL_MOVIE_ID +
-                        " = " + MovieContract.MovieEntry.TABLE_NAME +
-                        "." + MovieContract.MovieEntry.COL_MOVIE_ID);
+                MovieContract.MovieEntry.TABLE_NAME + " INNER JOIN " +
+                        MovieContract.TopRatedEntry.TABLE_NAME +
+                        " ON " + MovieContract.MovieEntry.TABLE_NAME +
+                        "." + MovieContract.MovieEntry.COL_MOVIE_ID +
+                        " = " + MovieContract.TopRatedEntry.TABLE_NAME +
+                        "." + MovieContract.TopRatedEntry.COL_MOVIE_ID);
 
     }
 

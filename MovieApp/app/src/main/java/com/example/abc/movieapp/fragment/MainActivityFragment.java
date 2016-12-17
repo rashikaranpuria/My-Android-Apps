@@ -423,7 +423,7 @@ public class MainActivityFragment extends Fragment implements LoaderManager.Load
                 movieValues.put(MovieEntry.COL_TITLE, movie_item.getString("title"));
                 movieValues.put(MovieEntry.COL_VOTE_AVERAGE, movie_item.getString("vote_average"));
 
-                Log.d(LOG_TAG, "movieValues" + movieValues.getAsString(MovieEntry.COL_TITLE));
+//                Log.d(LOG_TAG, "movieValues" + movieValues.getAsString(MovieEntry.COL_TITLE));
 
                 cVVector.add(movieValues);
 
@@ -480,12 +480,12 @@ public class MainActivityFragment extends Fragment implements LoaderManager.Load
                 inserted = getContext().getContentResolver().bulkInsert(MovieEntry.CONTENT_URI, cvArray);
                 if(getSort().equals("popular")){
                     insertedSort = getContext().getContentResolver().bulkInsert(PopularEntry.CONTENT_URI, cvArraySort);
-                    Log.d(LOG_TAG, "inserted popular entry "+insertedSort);
+//                    Log.d(LOG_TAG, "inserted popular entry "+insertedSort);
                 }
                 else
                 {
                     insertedSort = getContext().getContentResolver().bulkInsert(TopRatedEntry.CONTENT_URI, cvArraySort);
-                    Log.d(LOG_TAG, getSort() + "inserted top rated entry "+insertedSort);
+//                    Log.d(LOG_TAG, getSort() + "inserted top rated entry "+insertedSort);
                 }
             }
 
