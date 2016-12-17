@@ -171,7 +171,7 @@ public class MainActivityFragment extends Fragment implements LoaderManager.Load
         else{
             movieWithSort = TopRatedEntry.CONTENT_URI;
         }
-
+        Log.d(LOG_TAG,"loader: oncreate: "+movieWithSort);
         return new CursorLoader(getActivity(),
                 movieWithSort,
                 movieProjections,
@@ -182,6 +182,7 @@ public class MainActivityFragment extends Fragment implements LoaderManager.Load
 
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
+        Log.d(LOG_TAG,"loader: on load finished : "+data.getCount());
         movieAdapter.swapCursor(data);
         movieAdapter.notifyDataSetChanged();
     }
@@ -564,6 +565,7 @@ public class MainActivityFragment extends Fragment implements LoaderManager.Load
             finally {
                 if (urlConnection != null) {
                     urlConnection.disconnect();
+//                    restartLoader();
                 }
                 if (reader != null) {
                     try {
@@ -582,16 +584,10 @@ public class MainActivityFragment extends Fragment implements LoaderManager.Load
 
 
 //        @Override
-//        protected void onPostExecute(MovieDetail[] result) {
-//            movies=result;
-//            if (result != null) {
-//                movieAdapter.clear();
-//                for (int i=0;i<result.length;i++){
-//                    movieAdapter.add(result[i]);
-//                }
-//            }
-//
-//        }
+        protected void onPostExecute(MovieDetail[] result) {
+            restartLoader();
+
+        }
     }
 
 }

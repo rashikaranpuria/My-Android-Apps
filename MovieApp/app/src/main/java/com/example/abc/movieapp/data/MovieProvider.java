@@ -78,13 +78,14 @@ public class MovieProvider extends ContentProvider {
                         "." + MovieContract.PopularEntry.COL_MOVIE_ID);
 
         topRatedMoviesQueryBuilder = new SQLiteQueryBuilder();
+//        topRatedMoviesQueryBuilder.setTables(MovieContract.TopRatedEntry.);
         topRatedMoviesQueryBuilder.setTables(
-                MovieContract.MovieEntry.TABLE_NAME + " INNER JOIN " +
-                        MovieContract.TopRatedEntry.TABLE_NAME +
-                        " ON " + MovieContract.MovieEntry.TABLE_NAME +
-                        "." + MovieContract.MovieEntry.COL_MOVIE_ID +
-                        " = " + MovieContract.TopRatedEntry.TABLE_NAME +
-                        "." + MovieContract.TopRatedEntry.COL_MOVIE_ID);
+                MovieContract.TopRatedEntry.TABLE_NAME + " INNER JOIN " +
+                        MovieContract.MovieEntry.TABLE_NAME +
+                        " ON " + MovieContract.TopRatedEntry.TABLE_NAME +
+                        "." + MovieContract.TopRatedEntry.COL_MOVIE_ID +
+                        " = " + MovieContract.MovieEntry.TABLE_NAME +
+                        "." + MovieContract.MovieEntry.COL_MOVIE_ID);
 
     }
 
@@ -146,7 +147,9 @@ public class MovieProvider extends ContentProvider {
     @Override
     public Cursor query(Uri uri, String[] projection, String selection, String[] selectionArgs, String sortOrder) {
         Cursor retCursor;
-        switch (mURIMatcher.match(uri)){
+        final int match=mURIMatcher.match(uri);
+        Log.d(LOG_TAG,"query: uri : "+uri+", match: "+match);
+        switch (match){
             case MOVIES:{
                 retCursor = mOpenHelper.getReadableDatabase().query(
                         MovieContract.MovieEntry.TABLE_NAME,
@@ -215,6 +218,8 @@ public class MovieProvider extends ContentProvider {
                 break;
             }
             case TOP_RATED:{
+                Log.d(LOG_TAG, "in top rated case ");
+
                 retCursor = topRatedMoviesQueryBuilder.query(
                         mOpenHelper.getReadableDatabase(),
                         projection,
@@ -512,30 +517,36 @@ public class MovieProvider extends ContentProvider {
     public int bulkInsert(Uri uri, ContentValues[] values) {
         final SQLiteDatabase db = mOpenHelper.getWritableDatabase();
         final int match = mURIMatcher.match(uri);
-
+        Log.d(LOG_TAG,"bulk insert: uri: "+uri+" code:"+match);
         switch (match) {
             case MOVIES:
+                Log.d(LOG_TAG,"bulk insert:Movies");
                 db.beginTransaction();
                 int returnCount = 0;
                 try {
                     for (ContentValues value : values) {
                         long _id = db.insert(MovieContract.MovieEntry.TABLE_NAME, null, value);
+                        Log.d(LOG_TAG,"bulk insert:Movies _id "+_id);
                         if (_id != -1) {
                             returnCount++;
                         }
                     }
+                    db.setTransactionSuccessful();
                     Log.d(LOG_TAG, " rows inserted " + returnCount + values[0].getAsString(MovieContract.MovieEntry.COL_TITLE));
                 } finally {
+
                     db.endTransaction();
                 }
                 getContext().getContentResolver().notifyChange(uri, null);
                 return returnCount;
             case POPULAR:
+                Log.d(LOG_TAG,"bulk insert:Popular");
                 db.beginTransaction();
                 returnCount = 0;
                 try {
                     for (ContentValues value : values) {
                         long _id = db.insert(MovieContract.PopularEntry.TABLE_NAME, null, value);
+                        Log.d(LOG_TAG,"bulk insert:Popular _id "+_id);
                         if (_id != -1) {
                             returnCount++;
                         }
@@ -547,11 +558,14 @@ public class MovieProvider extends ContentProvider {
                 getContext().getContentResolver().notifyChange(uri, null);
                 return returnCount;
             case TOP_RATED:
+                Log.d(LOG_TAG,"bulk insert:Top rated");
                 db.beginTransaction();
                 returnCount = 0;
                 try {
                     for (ContentValues value : values) {
                         long _id = db.insert(MovieContract.TopRatedEntry.TABLE_NAME, null, value);
+                        Log.d(LOG_TAG,"bulk inser:Top rated _id "+_id);
+
                         if (_id != -1) {
                             returnCount++;
                         }
@@ -563,11 +577,14 @@ public class MovieProvider extends ContentProvider {
                 getContext().getContentResolver().notifyChange(uri, null);
                 return returnCount;
             case REVIEWS:
+                Log.d(LOG_TAG,"bulk insert:Reviews");
                 db.beginTransaction();
                 returnCount = 0;
                 try {
                     for (ContentValues value : values) {
                         long _id = db.insert(MovieContract.ReviewEntry.TABLE_NAME, null, value);
+                        Log.d(LOG_TAG,"bulk inser:Reviews _id "+_id);
+
                         if (_id != -1) {
                             returnCount++;
                         }
@@ -579,11 +596,15 @@ public class MovieProvider extends ContentProvider {
                 getContext().getContentResolver().notifyChange(uri, null);
                 return returnCount;
             case VIDEOS:
+                Log.d(LOG_TAG,"bulk insert:Videos");
                 db.beginTransaction();
                 returnCount = 0;
                 try {
                     for (ContentValues value : values) {
                         long _id = db.insert(MovieContract.VideoEntry.TABLE_NAME, null, value);
+                        Log.d(LOG_TAG,"bulk inser:Videos values keyset: "+value.keySet());
+                        Log.d(LOG_TAG,"bulk inser:Videos values ,name: "+value.get("name")+" , movie_id: "+value.get("movie_id")+", key: "+value.get("key"));
+                        Log.d(LOG_TAG,"bulk inser:Videos _id "+_id);
                         if (_id != -1) {
                             returnCount++;
                         }
