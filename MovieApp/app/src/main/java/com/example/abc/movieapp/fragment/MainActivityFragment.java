@@ -108,17 +108,20 @@ public class MainActivityFragment extends Fragment implements LoaderManager.Load
         // for detail page another adapter
         gridview.setAdapter(movieAdapter);
 
-//        gridview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-//            public void onItemClick(AdapterView<?> parent, View v,
-//                                    int position, long id) {
-//                MovieDetail movieDetail=movieGridAdapter.getItem(position);
-//                Intent intent = new Intent(getActivity(), DetailActivity.class);
-//                intent.putExtra("movieDetailObj",movieDetail);
-//                Log.d(LOG_TAG, String.valueOf("started-intent: "));
-//
-//                startActivity(intent);
-//            }
-//        });
+        gridview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            public void onItemClick(AdapterView<?> parent, View v,
+                                    int position, long id) {
+                Cursor cursor = (Cursor) parent.getItemAtPosition(position);
+                if (cursor != null) {
+                    Intent intent = new Intent(getActivity(), DetailActivity.class)
+                            .setData(MovieContract.MovieEntry.buildMovieUri(
+                                     cursor.getLong(COL_MOVIE_ID)
+                            ));
+                    Log.d(LOG_TAG, " movie id passed to detail view " + cursor.getLong(COL_MOVIE_ID));
+                    startActivity(intent);
+                }
+            }
+        });
         return rootView;
     }
 
@@ -136,15 +139,13 @@ public class MainActivityFragment extends Fragment implements LoaderManager.Load
     }
 
     private void updateView() {
-
         FetchMoviesTask movieTask = new FetchMoviesTask();
         //here you fetch preference and send in to update
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
         String sort = prefs.getString(getString(R.string.pref_sort_key),
                 getString(R.string.pref_sort_popular));
-        Log.d(LOG_TAG, "sort type" + sort);
-
         movieTask.execute(sort);
+        restartLoader();
     }
 
     private String getSort() {
