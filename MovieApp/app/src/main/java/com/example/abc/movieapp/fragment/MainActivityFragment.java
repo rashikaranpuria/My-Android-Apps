@@ -62,7 +62,7 @@ public class MainActivityFragment extends Fragment implements LoaderManager.Load
     GridView gridview;
 
 
-    static final String[] movieProjections={
+    static final String[] movieProjections = {
             MovieContract.MovieEntry.TABLE_NAME+"."+MovieContract.MovieEntry._ID,
             MovieContract.MovieEntry.TABLE_NAME+"."+ MovieEntry.COL_MOVIE_ID,
             MovieEntry.COL_TITLE,

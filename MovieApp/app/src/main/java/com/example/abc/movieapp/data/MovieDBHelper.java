@@ -15,7 +15,7 @@ import static android.os.Build.VERSION_CODES.M;
 public class MovieDBHelper extends SQLiteOpenHelper {
 
     // If you change the database schema, you must increment the database version.
-    private static final int DATABASE_VERSION = 3;
+    private static final int DATABASE_VERSION = 4;
 
     static final String DATABASE_NAME = "movie.db";
 
@@ -27,15 +27,15 @@ public class MovieDBHelper extends SQLiteOpenHelper {
     public void onCreate(SQLiteDatabase sqLiteDatabase) {
 
         final String SQL_CREATE_MOVIE_TABLE = "CREATE TABLE " + MovieEntry.TABLE_NAME + " ( " +
-                MovieEntry._ID + " INTEGER PRIMARY KEY, " +
+                MovieEntry._ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
                 MovieEntry.COL_MOVIE_ID + " TEXT UNIQUE NOT NULL, " +
                 MovieEntry.COL_TITLE + " TEXT NOT NULL, " +
                 MovieEntry.COL_POSTER_PATH + " TEXT NOT NULL, " +
                 MovieEntry.COL_OVERVIEW + " TEXT NOT NULL, " +
                 MovieEntry.COL_RELEASE_DATE + " TEXT NOT NULL, " +
                 MovieEntry.COL_VOTE_AVERAGE + " TEXT NOT NULL, " +
-                MovieEntry.COL_FAVORITE + " INTEGER DEFAULT 0 " +
-                ");";
+                MovieEntry.COL_FAVORITE + " INTEGER DEFAULT 0, " +
+                " UNIQUE ( " + MovieEntry.COL_MOVIE_ID + " ) ON CONFLICT IGNORE);";
 
         final String SQL_CREATE_REVIEW_TABLE = "CREATE TABLE " + ReviewEntry.TABLE_NAME + " ( " +
                 ReviewEntry._ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +

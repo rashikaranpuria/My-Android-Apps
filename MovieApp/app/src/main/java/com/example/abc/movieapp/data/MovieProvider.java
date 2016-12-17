@@ -70,21 +70,21 @@ public class MovieProvider extends ContentProvider {
 
         popularMoviesQueryBuilder = new SQLiteQueryBuilder();
         popularMoviesQueryBuilder.setTables(
-                MovieContract.MovieEntry.TABLE_NAME + " INNER JOIN " +
-                        MovieContract.PopularEntry.TABLE_NAME +
-                        " ON " + MovieContract.MovieEntry.TABLE_NAME +
-                        "." + MovieContract.MovieEntry.COL_MOVIE_ID +
-                        " = " + MovieContract.PopularEntry.TABLE_NAME +
-                        "." + MovieContract.PopularEntry.COL_MOVIE_ID);
+                MovieContract.PopularEntry.TABLE_NAME + " INNER JOIN " +
+                        MovieContract.MovieEntry.TABLE_NAME +
+                        " ON " + MovieContract.PopularEntry.TABLE_NAME +
+                        "." + MovieContract.PopularEntry.COL_MOVIE_ID +
+                        " = " + MovieContract.MovieEntry.TABLE_NAME +
+                        "." + MovieContract.MovieEntry.COL_MOVIE_ID);
 
         topRatedMoviesQueryBuilder = new SQLiteQueryBuilder();
         topRatedMoviesQueryBuilder.setTables(
-                MovieContract.MovieEntry.TABLE_NAME + " INNER JOIN " +
-                        MovieContract.TopRatedEntry.TABLE_NAME +
-                        " ON " + MovieContract.MovieEntry.TABLE_NAME +
-                        "." + MovieContract.MovieEntry.COL_MOVIE_ID +
-                        " = " + MovieContract.TopRatedEntry.TABLE_NAME +
-                        "." + MovieContract.TopRatedEntry.COL_MOVIE_ID);
+                MovieContract.TopRatedEntry.TABLE_NAME + " INNER JOIN " +
+                        MovieContract.MovieEntry.TABLE_NAME +
+                        " ON " + MovieContract.TopRatedEntry.TABLE_NAME +
+                        "." + MovieContract.TopRatedEntry.COL_MOVIE_ID +
+                        " = " + MovieContract.MovieEntry.TABLE_NAME +
+                        "." + MovieContract.MovieEntry.COL_MOVIE_ID);
 
     }
 
@@ -206,7 +206,7 @@ public class MovieProvider extends ContentProvider {
                         null,
                         null,
                         sortOrder);
-                Log.d(LOG_TAG, "in query case popular " + projection[3] + " " + retCursor.getCount());
+                Log.d(LOG_TAG, "in query case popular " + projection[1] + " " + retCursor.getCount());
                 break;
             }
             case POPULAR_WITH_ID:{
@@ -223,7 +223,7 @@ public class MovieProvider extends ContentProvider {
                         null,
                         null,
                         sortOrder);
-                Log.d(LOG_TAG, "in query case top rate " + projection[2] + " " + retCursor.getCount());
+                Log.d(LOG_TAG, "in query case top rate " + projection[1] + " " + retCursor.getCount());
                 break;
             }
             case TOP_RATED_WITH_ID:{
@@ -524,6 +524,7 @@ public class MovieProvider extends ContentProvider {
                             returnCount++;
                         }
                     }
+                    db.setTransactionSuccessful();
                     Log.d(LOG_TAG, " rows inserted " + returnCount + values[0].getAsString(MovieContract.MovieEntry.COL_TITLE));
                 } finally {
                     db.endTransaction();
