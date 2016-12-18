@@ -1,6 +1,7 @@
 package com.example.abc.movieapp.fragment;
 
 import android.content.ContentValues;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
@@ -123,13 +124,12 @@ public class MainActivityFragment extends Fragment implements LoaderManager.Load
     }
 
     private void updateView() {
-        FetchMoviesTask movieTask = new FetchMoviesTask();
-        //here you fetch preference and send in to update
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
         String sort = prefs.getString(getString(R.string.pref_sort_key),
                 getString(R.string.pref_sort_popular));
+        FetchMoviesTask movieTask = new FetchMoviesTask(getContext());
+        //here you fetch preference and send in to update
         movieTask.execute(sort);
-
         restartLoader();
     }
 
@@ -184,6 +184,12 @@ public class MainActivityFragment extends Fragment implements LoaderManager.Load
 
         private final String LOG_TAG = FetchMoviesTask.class.getSimpleName();
 
+        Context mContext;
+        String sort;
+
+        FetchMoviesTask(Context context) {
+            mContext = context;
+        }
 
         private ContentValues[] getReviews(long movie_id) throws JSONException {
             HttpURLConnection urlConnection = null;
@@ -414,8 +420,8 @@ public class MainActivityFragment extends Fragment implements LoaderManager.Load
 //                Log.d(LOG_TAG, "movieValues" + movieValues.getAsString(MovieEntry.COL_TITLE));
 
                 cVVector.add(movieValues);
-
-                if(getSort().equals("popular")){
+                Log.d(LOG_TAG, sort);
+                if(sort.equals("popular")){
                     sortValues.put(PopularEntry.COL_MOVIE_ID, movie_item.getString("id"));
                 }
                 else{
@@ -429,7 +435,7 @@ public class MainActivityFragment extends Fragment implements LoaderManager.Load
                     ContentValues[] cVReviews = getReviews(Long.parseLong(movie_item.getString("id")));
                     // change vector to array
                     if ( cVReviews != null) {
-                        int review_insert = getContext().getContentResolver().bulkInsert(ReviewEntry.CONTENT_URI, cVReviews);
+                        int review_insert = mContext.getContentResolver().bulkInsert(ReviewEntry.CONTENT_URI, cVReviews);
                         Log.d(LOG_TAG, "Fetch Reviews Complete. " + review_insert + " Inserted");
 
                     }
@@ -446,7 +452,7 @@ public class MainActivityFragment extends Fragment implements LoaderManager.Load
                     ContentValues[] cVVideos = getVideos(Long.parseLong(movie_item.getString("id")));
                     // check if array is not null
                     if ( cVVideos != null) {
-                        int video_insert = getContext().getContentResolver().bulkInsert(VideoEntry.CONTENT_URI, cVVideos);
+                        int video_insert = mContext.getContentResolver().bulkInsert(VideoEntry.CONTENT_URI, cVVideos);
                         Log.d(LOG_TAG, "Fetch Videos Complete. " + video_insert + " Inserted");
                     }
                     else{
@@ -465,14 +471,14 @@ public class MainActivityFragment extends Fragment implements LoaderManager.Load
                 ContentValues[] cvArraySort = new ContentValues[cVVectorSort.size()];
                 cVVector.toArray(cvArray);
                 cVVectorSort.toArray(cvArraySort);
-                inserted = getContext().getContentResolver().bulkInsert(MovieEntry.CONTENT_URI, cvArray);
-                if(getSort().equals("popular")){
-                    insertedSort = getContext().getContentResolver().bulkInsert(PopularEntry.CONTENT_URI, cvArraySort);
+                inserted = mContext.getContentResolver().bulkInsert(MovieEntry.CONTENT_URI, cvArray);
+                if(sort.equals("popular")){
+                    insertedSort = mContext.getContentResolver().bulkInsert(PopularEntry.CONTENT_URI, cvArraySort);
 //                    Log.d(LOG_TAG, "inserted popular entry "+insertedSort);
                 }
                 else
                 {
-                    insertedSort = getContext().getContentResolver().bulkInsert(TopRatedEntry.CONTENT_URI, cvArraySort);
+                    insertedSort = mContext.getContentResolver().bulkInsert(TopRatedEntry.CONTENT_URI, cvArraySort);
 //                    Log.d(LOG_TAG, getSort() + "inserted top rated entry "+insertedSort);
                 }
             }
@@ -489,7 +495,7 @@ public class MainActivityFragment extends Fragment implements LoaderManager.Load
             if (params.length == 0) {
 //                return null;
             }
-
+            sort = params[0];
             String MovieJsonStr = null;
 
             // These two need to be declared outside the try/catch
