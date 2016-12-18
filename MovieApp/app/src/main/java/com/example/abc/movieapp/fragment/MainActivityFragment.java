@@ -78,6 +78,7 @@ public class MainActivityFragment extends Fragment implements LoaderManager.Load
     static final int COL_POSTER_PATH=6;
 
     public MainActivityFragment() {
+        setHasOptionsMenu(true);
     }
 
     @Override
@@ -86,22 +87,6 @@ public class MainActivityFragment extends Fragment implements LoaderManager.Load
 
         View rootView = inflater.inflate(R.layout.fragment_main, container, false);
         ButterKnife.bind(this, rootView);
-//        movieGridAdapter= new MovieGridAdapter(getContext(),new ArrayList<MovieDetail>());
-        //get data to populate
-//        String sort = getSort();
-//        Uri movieWithSort = null;
-//        if(sort.equals("popular")){
-//            movieWithSort = PopularEntry.CONTENT_URI;
-//        }
-//        else{
-//            movieWithSort = TopRatedEntry.CONTENT_URI;
-//        }
-
-
-//        Cursor cur = getActivity().getContentResolver().query(movieWithSort,
-//                movieProjections, null, null, null);
-
-//        Log.d(LOG_TAG, "cursor data" + cur.getString(3));
 
         movieAdapter = new MovieAdapter(getContext(), null, 0);
 
@@ -133,7 +118,6 @@ public class MainActivityFragment extends Fragment implements LoaderManager.Load
 
     public void restartLoader(){
         Log.d(LOG_TAG,"reinitialized");
-
         getLoaderManager().restartLoader(MOVIE_LOADER, null, this);
 
     }
@@ -145,6 +129,7 @@ public class MainActivityFragment extends Fragment implements LoaderManager.Load
         String sort = prefs.getString(getString(R.string.pref_sort_key),
                 getString(R.string.pref_sort_popular));
         movieTask.execute(sort);
+
         restartLoader();
     }
 
@@ -185,11 +170,11 @@ public class MainActivityFragment extends Fragment implements LoaderManager.Load
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
         Log.d(LOG_TAG,"loader: on load finished : "+data.getCount());
         movieAdapter.swapCursor(data);
-        movieAdapter.notifyDataSetChanged();
     }
 
     @Override
     public void onLoaderReset(Loader<Cursor> loader) {
+        Log.d(LOG_TAG,"loader: on load reset : ");
         movieAdapter.swapCursor(null);
 
     }
