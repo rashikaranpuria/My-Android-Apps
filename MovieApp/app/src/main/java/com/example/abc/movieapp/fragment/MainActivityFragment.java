@@ -170,13 +170,14 @@ public class MainActivityFragment extends Fragment implements LoaderManager.Load
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
         Log.d(LOG_TAG,"loader: on load finished : "+data.getCount());
         movieAdapter.swapCursor(data);
+        movieAdapter.notifyDataSetChanged();
     }
 
     @Override
     public void onLoaderReset(Loader<Cursor> loader) {
         Log.d(LOG_TAG,"loader: on load reset : ");
         movieAdapter.swapCursor(null);
-
+        movieAdapter.notifyDataSetChanged();
     }
 
     public class FetchMoviesTask extends AsyncTask<String, Void, Void> {
