@@ -130,7 +130,6 @@ public class MainActivityFragment extends Fragment implements LoaderManager.Load
         FetchMoviesTask movieTask = new FetchMoviesTask(getContext());
         //here you fetch preference and send in to update
         movieTask.execute(sort);
-        restartLoader();
     }
 
     private String getSort() {
@@ -142,8 +141,8 @@ public class MainActivityFragment extends Fragment implements LoaderManager.Load
     }
 
     @Override
-    public void onStart() {
-        super.onStart();
+    public void onResume() {
+        super.onResume();
         updateView();
     }
 
