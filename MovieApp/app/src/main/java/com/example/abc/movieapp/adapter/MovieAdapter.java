@@ -12,6 +12,8 @@ import com.example.abc.movieapp.R;
 import com.example.abc.movieapp.data.MovieContract;
 import com.squareup.picasso.Picasso;
 
+import butterknife.ButterKnife;
+
 /**
  * Created by rashi on 15/12/16.
  */
@@ -47,6 +49,7 @@ public class MovieAdapter extends CursorAdapter {
 
     @Override
     public void bindView(View view, Context context, Cursor cursor) {
+
         String poster_path = cursor.getString(COL_POSTER_PATH);
         String url="http://image.tmdb.org/t/p/w185/"+poster_path;
 

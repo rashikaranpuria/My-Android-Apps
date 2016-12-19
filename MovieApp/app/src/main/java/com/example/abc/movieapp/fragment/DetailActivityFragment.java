@@ -20,6 +20,7 @@ import android.widget.TextView;
 import com.example.abc.movieapp.MovieDetail;
 import com.example.abc.movieapp.R;
 import com.example.abc.movieapp.activity.DetailActivity;
+import com.example.abc.movieapp.adapter.DetailAdapter;
 import com.example.abc.movieapp.adapter.ReviewAdapter;
 import com.example.abc.movieapp.adapter.TrailerAdapter;
 import com.example.abc.movieapp.data.MovieContract;
@@ -40,17 +41,9 @@ public class DetailActivityFragment extends Fragment implements LoaderManager.Lo
     private static final int TRAILER_LOADER = 2;
     public static final String LOG_TAG=DetailActivityFragment.class.getSimpleName();
 
+    DetailAdapter detailAdapter;
     ReviewAdapter reviewAdapter;
-
     TrailerAdapter trailerAdapter;
-
-
-    //all views received using butterknife
-    @BindView(R.id.detail_movie_title) TextView movie_title;
-    @BindView(R.id.detail_movie_image) ImageView imageView;
-    @BindView(R.id.detail_movie_release_date) TextView movie_release_date;
-    @BindView(R.id.detail_movie_ratings) TextView movie_ratings;
-    @BindView(R.id.detail_movie_overview) TextView movie_overview;
 
     static final String[] movieProjections = {
             MovieContract.MovieEntry.TABLE_NAME+"."+ MovieContract.MovieEntry._ID,
@@ -89,11 +82,16 @@ public class DetailActivityFragment extends Fragment implements LoaderManager.Lo
 
     }
 
+    @BindView(R.id.listViewOverview)
+    ListView listViewOverview;
+
     @BindView(R.id.listViewReviews)
     ListView listViewReviews;
 
     @BindView(R.id.listViewTrailers)
     ListView listViewTrailers;
+
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -103,8 +101,10 @@ public class DetailActivityFragment extends Fragment implements LoaderManager.Lo
 
         reviewAdapter = new ReviewAdapter(getContext(), null, 0);
         trailerAdapter = new TrailerAdapter(getContext(), null, 0);
+        detailAdapter = new DetailAdapter(getContext(), null, 0);
         listViewReviews.setAdapter(reviewAdapter);
         listViewTrailers.setAdapter(trailerAdapter);
+        listViewOverview.setAdapter(detailAdapter);
         listViewTrailers.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             public void onItemClick(AdapterView<?> parent, View v,
                                     int position, long id) {
@@ -158,22 +158,8 @@ public class DetailActivityFragment extends Fragment implements LoaderManager.Lo
 
         switch (loader.getId()){
             case DETAIL_LOADER:
-                String title = data.getString(COL_TITLE);
-
-                String release_date = data.getString(COL_RELEASE_DATE);
-
-                String poster_path = data.getString(COL_POSTER_PATH);
-
-                String ratings = data.getString(COL_VOTE_AVERAGE);
-
-                String overview = data.getString(COL_OVERVIEW);
-
-                movie_title.setText(title);
-                String url = "http://image.tmdb.org/t/p/w185/" + poster_path;
-                Picasso.with(getContext()).load(url).into(imageView);
-                movie_release_date.setText(release_date);
-                movie_ratings.setText(ratings + "/10");
-                movie_overview.setText(overview);
+                detailAdapter.swapCursor(data);
+                detailAdapter.notifyDataSetChanged();
                 break;
             case REVIEW_LOADER:
                 reviewAdapter.swapCursor(data);
@@ -190,7 +176,7 @@ public class DetailActivityFragment extends Fragment implements LoaderManager.Lo
     public void onLoaderReset(Loader<Cursor> loader) {
         switch (loader.getId()){
             case DETAIL_LOADER:
-                //
+                detailAdapter.swapCursor(null);
                 break;
             case REVIEW_LOADER:
                 reviewAdapter.swapCursor(null);

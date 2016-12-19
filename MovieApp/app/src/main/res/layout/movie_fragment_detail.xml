@@ -1,112 +1,28 @@
-<android.support.v4.widget.NestedScrollView xmlns:tools="http://schemas.android.com/tools"
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:layout_width="match_parent"
-    xmlns:android="http://schemas.android.com/apk/res/android">
-
-    <LinearLayout
-        android:orientation="vertical" android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        tools:context="com.example.abc.movieapp.fragment.DetailActivityFragment"
-        tools:showIn="@layout/movie_detail"
-        android:weightSum="1">
-
-        <TextView
-            android:id="@+id/detail_movie_title"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Chappie"
-            android:textSize="26dp"
-            android:textColor="@color/white"
-            android:background="@color/papaya_red"
-            android:padding="20dp"
-            />
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:paddingTop="10dp"
-            android:paddingBottom="10dp"
-            android:paddingRight="20dp"
-            android:paddingLeft="20dp"
-            android:orientation="horizontal">
-            <ImageView
-                android:id="@+id/detail_movie_image"
-                android:layout_width="130dp"
-                android:layout_height="180dp"
-                android:src="@drawable/default_image"/>
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:paddingLeft="40dp"
-                android:orientation="vertical">
-                <TextView
-                    android:id="@+id/detail_movie_release_date_title"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textSize="16dp"
-                    android:text="Release date"
-                    android:textColor="@color/papaya_red"/>
-                <TextView
-                    android:id="@+id/detail_movie_release_date"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textSize="18dp"
-                    android:text="25-06-2009"
-                    android:textColor="@color/slate"/>
-                <TextView
-                    android:id="@+id/detail_movie_ratings_title"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textSize="16dp"
-                    android:text="Ratings"
-                    android:textColor="@color/papaya_red"/>
-                <TextView
-                    android:id="@+id/detail_movie_ratings"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textSize="18dp"
-                    android:text="5.4"
-                    android:textColor="@color/slate"/>
-
-            </LinearLayout>
-
-        </LinearLayout>
-
-        <TextView
-            android:id="@+id/detail_movie_overview_title"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:paddingLeft="20dp"
-            android:paddingTop="10dp"
-            android:textSize="16dp"
-            android:text="Synopsis"
-            android:textColor="@color/papaya_red"/>
-
-        <TextView
-            android:id="@+id/detail_movie_overview"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:paddingLeft="20dp"
-            android:paddingRight="20dp"
-            android:paddingTop="5dp"
-            android:paddingBottom="10dp"
-            android:textSize="16dp"
-            android:textColor="@color/slate"
-            android:text="hgjhgjhgj sdhdhtuihturhtu hsfeushfshetieht ihetiehteithi"/>
+    tools:context="com.example.abc.movieapp.fragment.DetailActivityFragment"
+    android:weightSum="1">
 
     <ListView
-        android:nestedScrollingEnabled="true"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/listViewOverview">
+    </ListView>
+
+    <ListView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         android:id="@+id/listViewTrailers">
     </ListView>
 
     <ListView
-        android:nestedScrollingEnabled="true"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:id="@+id/listViewReviews">
     </ListView>
 
-    </LinearLayout>
-</android.support.v4.widget.NestedScrollView>
+</LinearLayout>
+
