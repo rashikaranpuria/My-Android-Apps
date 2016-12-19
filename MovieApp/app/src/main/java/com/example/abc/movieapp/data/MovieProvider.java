@@ -22,7 +22,7 @@ public class MovieProvider extends ContentProvider {
 
     private MovieDBHelper mOpenHelper;
 
-    public static final String FAVORITE = "favorites";
+    public static final String FAVORITE = "favorite";
 
     static final int MOVIES = 100;
     static final int MOVIE_WITH_ID = 101;
@@ -120,7 +120,7 @@ public class MovieProvider extends ContentProvider {
 
         uriMatcher.addURI(authority, MovieContract.PATH_MOVIE , MOVIES);
         uriMatcher.addURI(authority, MovieContract.PATH_MOVIE + "/#", MOVIE_WITH_ID);
-        uriMatcher.addURI(authority, "/" + FAVORITE , FAVORITE_MOVIES);
+        uriMatcher.addURI(authority, MovieContract.PATH_MOVIE + "/" + FAVORITE , FAVORITE_MOVIES);
 
         uriMatcher.addURI(authority, MovieContract.PATH_REVIEW , REVIEWS);
         uriMatcher.addURI(authority, MovieContract.PATH_REVIEW + "/#" , REVIEW_WITH_ID);

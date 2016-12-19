@@ -52,6 +52,8 @@ public class MainActivityFragment extends Fragment implements LoaderManager.Load
 //    private MovieGridAdapter movieGridAdapter;
     private MovieAdapter movieAdapter;
 
+    public static final String FAVORITE = "favorite";
+
     MovieDetail[] movies = {};
     public static final String LOG_TAG = MainActivityFragment.class.getSimpleName();
 
@@ -68,13 +70,15 @@ public class MainActivityFragment extends Fragment implements LoaderManager.Load
             MovieEntry.COL_OVERVIEW,
             MovieEntry.COL_VOTE_AVERAGE,
             MovieEntry.COL_RELEASE_DATE,
-            MovieEntry.COL_POSTER_PATH};
+            MovieEntry.COL_POSTER_PATH,
+            MovieEntry.COL_FAVORITE};
     static final int COL_MOVIE_ID=1;
     static final int COL_TITLE=2;
     static final int COL_OVERVIEW=3;
     static final int COL_VOTE_AVERAGE=4;
     static final int COL_RELEASE_DATE=5;
     static final int COL_POSTER_PATH=6;
+    static final int COL_FAVORITE=7;
 
     public MainActivityFragment() {
         setHasOptionsMenu(true);
@@ -153,6 +157,9 @@ public class MainActivityFragment extends Fragment implements LoaderManager.Load
         Uri movieWithSort;
         if(sort.equals("popular")){
             movieWithSort = PopularEntry.CONTENT_URI;
+        }
+        else if(sort.equals(FAVORITE)){
+            movieWithSort = MovieEntry.FAVORITE_URI;
         }
         else{
             movieWithSort = TopRatedEntry.CONTENT_URI;
@@ -424,7 +431,7 @@ public class MainActivityFragment extends Fragment implements LoaderManager.Load
                 if(sort.equals("popular")){
                     sortValues.put(PopularEntry.COL_MOVIE_ID, movie_item.getString("id"));
                 }
-                else{
+                else if(sort.equals("top_rated")){
                     sortValues.put(TopRatedEntry.COL_MOVIE_ID, movie_item.getString("id"));
                 }
 
@@ -476,7 +483,7 @@ public class MainActivityFragment extends Fragment implements LoaderManager.Load
                     insertedSort = mContext.getContentResolver().bulkInsert(PopularEntry.CONTENT_URI, cvArraySort);
 //                    Log.d(LOG_TAG, "inserted popular entry "+insertedSort);
                 }
-                else
+                else if(sort.equals("top_rated"))
                 {
                     insertedSort = mContext.getContentResolver().bulkInsert(TopRatedEntry.CONTENT_URI, cvArraySort);
 //                    Log.d(LOG_TAG, getSort() + "inserted top rated entry "+insertedSort);
@@ -496,6 +503,10 @@ public class MainActivityFragment extends Fragment implements LoaderManager.Load
 //                return null;
             }
             sort = params[0];
+
+            if(sort.equals(FAVORITE)){
+                return null;
+            }
             String MovieJsonStr = null;
 
             // These two need to be declared outside the try/catch

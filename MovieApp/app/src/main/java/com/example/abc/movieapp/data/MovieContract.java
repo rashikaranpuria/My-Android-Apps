@@ -22,6 +22,8 @@ public class MovieContract {
 
     public static final String PATH_REVIEW = "review";
 
+    public static final String PATH_FAVORITE = "favorite";
+
     public static final String PATH_VIDEO = "video";
 
     public static final String PATH_TOP_RATED = "top_rated";
@@ -32,6 +34,9 @@ public class MovieContract {
 
         public static final Uri CONTENT_URI =
                 BASE_CONTENT_URI.buildUpon().appendPath(PATH_MOVIE).build();
+
+        public static final Uri FAVORITE_URI =
+                CONTENT_URI.buildUpon().appendPath(PATH_FAVORITE).build();
 
         public static final String CONTENT_TYPE =
                 ContentResolver.CURSOR_DIR_BASE_TYPE + "/" + CONTENT_AUTHORITY + "/" + PATH_MOVIE;
@@ -62,6 +67,7 @@ public class MovieContract {
             Log.d(LOG_TAG, "getMovieIdFromUri: " + uri);
             return Long.parseLong(uri.getPathSegments().get(1));
         }
+
 
 //        public static Uri buildMoviewith
 
