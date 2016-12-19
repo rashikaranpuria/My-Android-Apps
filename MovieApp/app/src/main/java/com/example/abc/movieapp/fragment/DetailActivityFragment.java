@@ -18,6 +18,7 @@ import android.widget.TextView;
 import com.example.abc.movieapp.MovieDetail;
 import com.example.abc.movieapp.R;
 import com.example.abc.movieapp.adapter.ReviewAdapter;
+import com.example.abc.movieapp.adapter.TrailerAdapter;
 import com.example.abc.movieapp.data.MovieContract;
 import com.example.abc.movieapp.data.MovieContract.*;
 import com.squareup.picasso.Picasso;
@@ -37,6 +38,8 @@ public class DetailActivityFragment extends Fragment implements LoaderManager.Lo
     public static final String LOG_TAG=DetailActivityFragment.class.getSimpleName();
 
     ReviewAdapter reviewAdapter;
+
+    TrailerAdapter trailerAdapter;
 
 
     //all views received using butterknife
@@ -96,8 +99,9 @@ public class DetailActivityFragment extends Fragment implements LoaderManager.Lo
         ButterKnife.bind(this, rootView);
 
         reviewAdapter = new ReviewAdapter(getContext(), null, 0);
+        trailerAdapter = new TrailerAdapter(getContext(), null, 0);
         listViewReviews.setAdapter(reviewAdapter);
-
+        listViewTrailers.setAdapter(trailerAdapter);
         return rootView;
     }
 
@@ -105,6 +109,7 @@ public class DetailActivityFragment extends Fragment implements LoaderManager.Lo
     public void onActivityCreated(Bundle savedInstanceState) {
         getLoaderManager().initLoader(DETAIL_LOADER, null, this);
         getLoaderManager().initLoader(REVIEW_LOADER, null, this);
+        getLoaderManager().initLoader(TRAILER_LOADER, null, this);
         super.onActivityCreated(savedInstanceState);
     }
 
@@ -123,7 +128,6 @@ public class DetailActivityFragment extends Fragment implements LoaderManager.Lo
                 break;
             case REVIEW_LOADER:
                 movie_id = intent.getLongExtra("movie_id", 1L);
-                Log.d(LOG_TAG, "movie id for the trailer" + movie_id);
                 newCursorLoader = new CursorLoader(getActivity(), ReviewEntry.buildReviewUri(movie_id), reviewsProjection, null, null, null );
                 break;
             case TRAILER_LOADER:
@@ -163,7 +167,8 @@ public class DetailActivityFragment extends Fragment implements LoaderManager.Lo
                 reviewAdapter.notifyDataSetChanged();
                 break;
             case TRAILER_LOADER:
-
+                trailerAdapter.swapCursor(data);
+                trailerAdapter.notifyDataSetChanged();
                 break;
         }
     }
@@ -178,7 +183,7 @@ public class DetailActivityFragment extends Fragment implements LoaderManager.Lo
                 reviewAdapter.swapCursor(null);
                 break;
             case TRAILER_LOADER:
-                //
+                trailerAdapter.swapCursor(null);
                 break;
         }
     }
