@@ -2,6 +2,7 @@ package com.example.abc.movieapp.fragment;
 
 import android.content.Intent;
 import android.database.Cursor;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
@@ -11,12 +12,14 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
 import com.example.abc.movieapp.MovieDetail;
 import com.example.abc.movieapp.R;
+import com.example.abc.movieapp.activity.DetailActivity;
 import com.example.abc.movieapp.adapter.ReviewAdapter;
 import com.example.abc.movieapp.adapter.TrailerAdapter;
 import com.example.abc.movieapp.data.MovieContract;
@@ -102,6 +105,16 @@ public class DetailActivityFragment extends Fragment implements LoaderManager.Lo
         trailerAdapter = new TrailerAdapter(getContext(), null, 0);
         listViewReviews.setAdapter(reviewAdapter);
         listViewTrailers.setAdapter(trailerAdapter);
+        listViewTrailers.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            public void onItemClick(AdapterView<?> parent, View v,
+                                    int position, long id) {
+                Cursor cursor = (Cursor) parent.getItemAtPosition(position);
+                if (cursor != null) {
+                    startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("http://www.youtube.com/watch?v="+cursor.getString(COL_KEY))));
+                    Log.d(LOG_TAG, " movie id passed to video watch view " + cursor.getLong(COL_MOVIE_ID));
+                }
+            }
+        });
         return rootView;
     }
 
