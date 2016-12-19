@@ -61,6 +61,14 @@
                 android:text="5.4"
                 android:textColor="@color/slate"/>
 
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/white"
+                android:backgroundTint="@color/colorPrimary"
+                android:text="Mark as favorite"
+                android:id="@+id/fav_button"/>
+
         </LinearLayout>
 
     </LinearLayout>
