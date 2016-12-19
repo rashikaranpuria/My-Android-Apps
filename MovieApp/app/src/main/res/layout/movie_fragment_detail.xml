@@ -1,9 +1,9 @@
-<ScrollView android:layout_height="match_parent"
+<android.support.v4.widget.NestedScrollView xmlns:tools="http://schemas.android.com/tools"
+    android:layout_height="match_parent"
     android:layout_width="match_parent"
     xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:tools="http://schemas.android.com/tools"
+    <LinearLayout
         android:orientation="vertical" android:layout_width="match_parent"
         android:layout_height="match_parent"
         tools:context="com.example.abc.movieapp.fragment.DetailActivityFragment"
@@ -94,5 +94,19 @@
             android:textColor="@color/slate"
             android:text="hgjhgjhgj sdhdhtuihturhtu hsfeushfshetieht ihetiehteithi"/>
 
+    <ListView
+        android:nestedScrollingEnabled="true"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/listViewTrailers">
+    </ListView>
+
+    <ListView
+        android:nestedScrollingEnabled="true"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/listViewReviews">
+    </ListView>
+
     </LinearLayout>
-</ScrollView>
+</android.support.v4.widget.NestedScrollView>

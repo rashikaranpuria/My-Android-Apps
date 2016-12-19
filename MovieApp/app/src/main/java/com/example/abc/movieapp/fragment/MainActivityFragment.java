@@ -25,7 +25,6 @@ import com.example.abc.movieapp.MovieDetail;
 import com.example.abc.movieapp.R;
 import com.example.abc.movieapp.activity.DetailActivity;
 import com.example.abc.movieapp.adapter.MovieAdapter;
-import com.example.abc.movieapp.adapter.MovieGridAdapter;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -37,7 +36,6 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.util.ArrayList;
 import java.util.Vector;
 
 import butterknife.BindView;
@@ -103,6 +101,7 @@ public class MainActivityFragment extends Fragment implements LoaderManager.Load
                             .setData(MovieContract.MovieEntry.buildMovieUri(
                                      cursor.getLong(COL_MOVIE_ID)
                             ));
+                    intent.putExtra("movie_id", cursor.getLong(COL_MOVIE_ID));
                     Log.d(LOG_TAG, " movie id passed to detail view " + cursor.getLong(COL_MOVIE_ID));
                     startActivity(intent);
                 }
