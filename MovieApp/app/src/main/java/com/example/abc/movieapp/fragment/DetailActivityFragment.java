@@ -114,7 +114,7 @@ public class DetailActivityFragment extends Fragment implements LoaderManager.Lo
             }
         });
 
-        listMovieDetail.setAdapter(reviewAdapter);
+        listMovieDetail.setAdapter(mergeAdapter);
         return rootView;
     }
 
@@ -159,15 +159,15 @@ public class DetailActivityFragment extends Fragment implements LoaderManager.Lo
         switch (loader.getId()){
             case DETAIL_LOADER:
                 detailAdapter.swapCursor(data);
-                detailAdapter.notifyDataSetChanged();
+//                detailAdapter.notifyDataSetChanged();
                 break;
             case REVIEW_LOADER:
                 reviewAdapter.swapCursor(data);
-                reviewAdapter.notifyDataSetChanged();
+//                reviewAdapter.notifyDataSetChanged();
                 break;
             case TRAILER_LOADER:
                 trailerAdapter.swapCursor(data);
-                trailerAdapter.notifyDataSetChanged();
+//                trailerAdapter.notifyDataSetChanged();
                 break;
         }
     }
