@@ -100,21 +100,24 @@ public class DetailActivityFragment extends Fragment implements LoaderManager.Lo
         detailAdapter = new DetailAdapter(getContext(), null, 0);
 
         mergeAdapter.addAdapter(detailAdapter);
-        mergeAdapter.addAdapter(reviewAdapter);
         mergeAdapter.addAdapter(trailerAdapter);
+        mergeAdapter.addAdapter(reviewAdapter);
+
+        listMovieDetail.setAdapter(mergeAdapter);
 
         listMovieDetail.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
             public void onItemClick(AdapterView<?> parent, View v,
                                     int position, long id) {
                 Cursor cursor = (Cursor) parent.getItemAtPosition(position);
-                if (cursor != null && cursor.getColumnName(COL_KEY) == videosProjection[2]) {
+                Log.d("is same", cursor.getColumnName(COL_KEY) + " " + videosProjection[2]);
+                if (cursor != null && cursor.getColumnName(COL_KEY).equals(videosProjection[2])){
                     startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("http://www.youtube.com/watch?v="+cursor.getString(COL_KEY))));
                     Log.d(LOG_TAG, " movie id passed to video watch view " + cursor.getLong(COL_MOVIE_ID));
                 }
             }
         });
 
-        listMovieDetail.setAdapter(mergeAdapter);
         return rootView;
     }
 
