@@ -17,6 +17,7 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.commonsware.cwac.merge.MergeAdapter;
 import com.example.abc.movieapp.MovieDetail;
 import com.example.abc.movieapp.R;
 import com.example.abc.movieapp.activity.DetailActivity;
@@ -44,6 +45,7 @@ public class DetailActivityFragment extends Fragment implements LoaderManager.Lo
     DetailAdapter detailAdapter;
     ReviewAdapter reviewAdapter;
     TrailerAdapter trailerAdapter;
+    MergeAdapter mergeAdapter = new MergeAdapter();
 
     static final String[] movieProjections = {
             MovieContract.MovieEntry.TABLE_NAME+"."+ MovieContract.MovieEntry._ID,
@@ -84,16 +86,8 @@ public class DetailActivityFragment extends Fragment implements LoaderManager.Lo
 
     }
 
-    @BindView(R.id.listViewOverview)
-    ListView listViewOverview;
-
-    @BindView(R.id.listViewReviews)
-    ListView listViewReviews;
-
-    @BindView(R.id.listViewTrailers)
-    ListView listViewTrailers;
-
-
+    @BindView(R.id.listMovieDetail)
+    ListView listMovieDetail;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -104,19 +98,23 @@ public class DetailActivityFragment extends Fragment implements LoaderManager.Lo
         reviewAdapter = new ReviewAdapter(getContext(), null, 0);
         trailerAdapter = new TrailerAdapter(getContext(), null, 0);
         detailAdapter = new DetailAdapter(getContext(), null, 0);
-        listViewReviews.setAdapter(reviewAdapter);
-        listViewTrailers.setAdapter(trailerAdapter);
-        listViewOverview.setAdapter(detailAdapter);
-        listViewTrailers.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+
+        mergeAdapter.addAdapter(detailAdapter);
+        mergeAdapter.addAdapter(reviewAdapter);
+        mergeAdapter.addAdapter(trailerAdapter);
+
+        listMovieDetail.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             public void onItemClick(AdapterView<?> parent, View v,
                                     int position, long id) {
                 Cursor cursor = (Cursor) parent.getItemAtPosition(position);
-                if (cursor != null) {
+                if (cursor != null && cursor.getColumnName(COL_KEY) == videosProjection[2]) {
                     startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("http://www.youtube.com/watch?v="+cursor.getString(COL_KEY))));
                     Log.d(LOG_TAG, " movie id passed to video watch view " + cursor.getLong(COL_MOVIE_ID));
                 }
             }
         });
+
+        listMovieDetail.setAdapter(reviewAdapter);
         return rootView;
     }
 

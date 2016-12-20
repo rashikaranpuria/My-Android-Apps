@@ -33,8 +33,12 @@ dependencies {
     compile 'com.google.code.gson:gson:2.4'
     compile 'com.jakewharton:butterknife:8.0.1'
     apt 'com.jakewharton:butterknife-compiler:8.0.1'
+    compile 'com.commonsware.cwac:merge:1.1.2'
 }
 
 repositories {
     mavenCentral()
+    maven {
+        url "https://s3.amazonaws.com/repo.commonsware.com"
+    }
 }

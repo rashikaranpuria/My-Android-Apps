@@ -9,19 +9,7 @@
     <ListView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/listViewOverview">
-    </ListView>
-
-    <ListView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/listViewTrailers">
-    </ListView>
-
-    <ListView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/listViewReviews">
+        android:id="@+id/listMovieDetail">
     </ListView>
 
 </LinearLayout>
