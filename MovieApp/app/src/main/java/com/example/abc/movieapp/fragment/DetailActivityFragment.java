@@ -52,13 +52,15 @@ public class DetailActivityFragment extends Fragment implements LoaderManager.Lo
             MovieEntry.COL_OVERVIEW,
             MovieEntry.COL_VOTE_AVERAGE,
             MovieEntry.COL_RELEASE_DATE,
-            MovieEntry.COL_POSTER_PATH};
-    static final int COL_MOVIE_ID=1;
-    static final int COL_TITLE=2;
-    static final int COL_OVERVIEW=3;
-    static final int COL_VOTE_AVERAGE=4;
-    static final int COL_RELEASE_DATE=5;
-    static final int COL_POSTER_PATH=6;
+            MovieEntry.COL_POSTER_PATH,
+            MovieEntry.COL_FAVORITE};
+    static final int COL_MOVIE_ID = 1;
+    static final int COL_TITLE = 2;
+    static final int COL_OVERVIEW = 3;
+    static final int COL_VOTE_AVERAGE = 4;
+    static final int COL_RELEASE_DATE = 5;
+    static final int COL_POSTER_PATH = 6;
+    static final int COL_FAVORITE = 7;
 
     static final String[] reviewsProjection={
             MovieContract.ReviewEntry.TABLE_NAME+"."+MovieContract.ReviewEntry._ID,

@@ -474,31 +474,37 @@ public class MovieProvider extends ContentProvider {
 
         switch (match){
             case POPULAR:{
+                Log.d("favo", "update popular movie log 2");
                 rowsUpdated = db.update(MovieContract.PopularEntry.TABLE_NAME, contentValues, selection,
                         selectionArgs);
                 break;
             }
             case TOP_RATED:{
+                Log.d("favo", "update top rated movie log 2");
                 rowsUpdated = db.update(MovieContract.TopRatedEntry.TABLE_NAME, contentValues, selection,
                         selectionArgs);
                 break;
             }
             case FAVORITE_MOVIES:{
+                Log.d("favo", "update fav movie log 2");
                 rowsUpdated = db.update(MovieContract.MovieEntry.TABLE_NAME, contentValues, selection,
                         selectionArgs);
                 break;
             }
             case MOVIE_WITH_ID: {
+                Log.d("favo", "update movie log 2");
                 rowsUpdated = db.update(MovieContract.MovieEntry.TABLE_NAME, contentValues, selection,
                         selectionArgs);
                 break;
             }
             case REVIEWS:{
+                Log.d("favo", "update review log 2");
                 rowsUpdated = db.update(MovieContract.ReviewEntry.TABLE_NAME, contentValues, selection,
                         selectionArgs);
                 break;
             }
             case VIDEOS: {
+                Log.d("favo", "update video log 2");
                 rowsUpdated = db.update(MovieContract.VideoEntry.TABLE_NAME, contentValues, selection,
                         selectionArgs);
                 break;
