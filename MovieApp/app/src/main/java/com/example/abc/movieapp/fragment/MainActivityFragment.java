@@ -101,13 +101,9 @@ public class MainActivityFragment extends Fragment implements LoaderManager.Load
                                     int position, long id) {
                 Cursor cursor = (Cursor) parent.getItemAtPosition(position);
                 if (cursor != null) {
-                    Intent intent = new Intent(getActivity(), DetailActivity.class)
-                            .setData(MovieContract.MovieEntry.buildMovieUri(
-                                     cursor.getLong(COL_MOVIE_ID)
-                            ));
-                    intent.putExtra("movie_id", cursor.getLong(COL_MOVIE_ID));
-                    Log.d(LOG_TAG, " movie id passed to detail view " + cursor.getLong(COL_MOVIE_ID));
-                    startActivity(intent);
+                    Uri movieUriWithId = MovieContract.MovieEntry.buildMovieUri(cursor.getLong(COL_MOVIE_ID));
+                    ((Callback) getActivity())
+                            .onItemSelected(movieUriWithId);
                 }
             }
         });
@@ -135,6 +131,17 @@ public class MainActivityFragment extends Fragment implements LoaderManager.Load
         movieTask.execute(sort);
         restartLoader();
 
+    }
+
+    public interface Callback {
+        /**
+         * DetailFragmentCallback for when an item has been selected.
+         */
+        public void onItemSelected(Uri movieUri);
+    }
+
+    public void onSortOrderChange() {
+        updateView();
     }
 
     private String getSort() {

@@ -42,6 +42,10 @@ public class DetailActivityFragment extends Fragment implements LoaderManager.Lo
     private static final int TRAILER_LOADER = 2;
     public static final String LOG_TAG=DetailActivityFragment.class.getSimpleName();
 
+    public static final String DETAIL_URI = "URI";
+    private Uri mUri;
+    private long mMovieId;
+
     DetailAdapter detailAdapter;
     ReviewAdapter reviewAdapter;
     TrailerAdapter trailerAdapter;
@@ -92,6 +96,12 @@ public class DetailActivityFragment extends Fragment implements LoaderManager.Lo
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+
+        Bundle arguments = getArguments();
+        if (arguments != null) {
+            mUri = arguments.getParcelable(DetailActivityFragment.DETAIL_URI);
+            mMovieId = MovieEntry.getMovieIdFromUri(mUri);
+        }
         View rootView =  inflater.inflate(R.layout.movie_fragment_detail, container, false);
         ButterKnife.bind(this, rootView);
 
@@ -131,23 +141,22 @@ public class DetailActivityFragment extends Fragment implements LoaderManager.Lo
 
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-        Intent intent = getActivity().getIntent();
         long movie_id;
-        if (intent == null) {
+        if (mUri == null) {
             return null;
         }
         Log.v(LOG_TAG, "In onCreateLoader");
         CursorLoader newCursorLoader=null;
         switch (id){
             case DETAIL_LOADER:
-                newCursorLoader = new CursorLoader(getActivity(), intent.getData(), movieProjections, null, null, null );
+                newCursorLoader = new CursorLoader(getActivity(), mUri, movieProjections, null, null, null );
                 break;
             case REVIEW_LOADER:
-                movie_id = intent.getLongExtra("movie_id", 1L);
+                movie_id = mMovieId;
                 newCursorLoader = new CursorLoader(getActivity(), ReviewEntry.buildReviewUri(movie_id), reviewsProjection, null, null, null );
                 break;
             case TRAILER_LOADER:
-                movie_id = intent.getLongExtra("movie_id", 1L);
+                movie_id = mMovieId;
                 newCursorLoader = new CursorLoader(getActivity(), VideoEntry.buildVideoUri(movie_id), videosProjection, null, null, null );
                 break;
         }
