@@ -1,9 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <color name="colorPrimary">#008fff</color>
+    <color name="semi_colorPrimary">#66008fff</color>
     <color name="colorPrimaryDark">#008f95</color>
     <color name="colorAccent">#e24e42</color>
     <color name="white">#ffffff</color>
     <color name="papaya_red">#ff4d4d</color>
+    <color name="semi_papaya_red">#66ff4d4d</color>
     <color name="slate">#1a1a1a</color>
+    <color name="semi_slate">#701a1a1a</color>
 </resources>
