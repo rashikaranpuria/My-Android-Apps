@@ -89,6 +89,7 @@ public class MovieSyncAdapter extends AbstractThreadedSyncAdapter {
         sort = getSort();
 
         if(sort.equals(FAVORITE)){
+            Log.d(LOG_TAG, "returned from sync as it is favorite");
             return;
         }
         String MovieJsonStr = null;
@@ -456,6 +457,7 @@ public class MovieSyncAdapter extends AbstractThreadedSyncAdapter {
             cVVector.toArray(cvArray);
             cVVectorSort.toArray(cvArraySort);
             inserted = getContext().getContentResolver().bulkInsert(MovieContract.MovieEntry.CONTENT_URI, cvArray);
+
             notifyMovie();
             if(sort.equals("popular")){
                 insertedSort = getContext().getContentResolver().bulkInsert(MovieContract.PopularEntry.CONTENT_URI, cvArraySort);
