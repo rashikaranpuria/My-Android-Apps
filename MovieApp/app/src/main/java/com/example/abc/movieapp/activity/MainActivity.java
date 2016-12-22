@@ -15,6 +15,7 @@ import android.view.MenuItem;
 import com.example.abc.movieapp.R;
 import com.example.abc.movieapp.fragment.DetailActivityFragment;
 import com.example.abc.movieapp.fragment.MainActivityFragment;
+import com.example.abc.movieapp.sync.MovieSyncAdapter;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -47,6 +48,8 @@ public class MainActivity extends AppCompatActivity implements MainActivityFragm
         else{
             mTwoPane = false;
         }
+
+        MovieSyncAdapter.initializeSyncAdapter(this);
     }
 
     public String getSortBy(){

@@ -1,5 +1,7 @@
 package com.example.abc.movieapp.fragment;
 
+import android.app.AlarmManager;
+import android.app.PendingIntent;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
@@ -43,6 +45,7 @@ import butterknife.ButterKnife;
 
 import com.example.abc.movieapp.data.MovieContract;
 import com.example.abc.movieapp.data.MovieContract.*;
+import com.example.abc.movieapp.sync.MovieSyncAdapter;
 
 /**
  * A placeholder fragment containing a simple view.
@@ -58,6 +61,10 @@ public class MainActivityFragment extends Fragment implements LoaderManager.Load
     public static final String LOG_TAG = MainActivityFragment.class.getSimpleName();
 
     private static final int MOVIE_LOADER = 0;
+
+    private static final String SELECTED_KEY = "selected_position";
+
+    private int mPosition;
 
     @BindView(R.id.gridview)
     GridView gridview;
@@ -105,8 +112,16 @@ public class MainActivityFragment extends Fragment implements LoaderManager.Load
                     ((Callback) getActivity())
                             .onItemSelected(movieUriWithId);
                 }
+                mPosition = position;
             }
         });
+
+        if (savedInstanceState != null && savedInstanceState.containsKey(SELECTED_KEY)) {
+            // The listview probably hasn't even been populated yet.  Actually perform the
+            // swapout in onLoadFinished.
+            mPosition = savedInstanceState.getInt(SELECTED_KEY);
+        }
+
         return rootView;
     }
 
@@ -122,13 +137,36 @@ public class MainActivityFragment extends Fragment implements LoaderManager.Load
 
     }
 
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        // When tablets rotate, the currently selected list item needs to be saved.
+        // When no item is selected, mPosition will be set to Listview.INVALID_POSITION,
+        // so check for that before storing.
+        if (mPosition != GridView.INVALID_POSITION) {
+            outState.putInt(SELECTED_KEY, mPosition);
+        }
+        super.onSaveInstanceState(outState);
+    }
+
     private void updateView() {
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
-        String sort = prefs.getString(getString(R.string.pref_sort_key),
-                getString(R.string.pref_sort_popular));
-        FetchMoviesTask movieTask = new FetchMoviesTask(getContext());
-        //here you fetch preference and send in to update
-        movieTask.execute(sort);
+//        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
+//        String sort = prefs.getString(getString(R.string.pref_sort_key),
+//                getString(R.string.pref_sort_popular));
+//
+//        //alarm intent for broadcast receiver
+//        Intent alarmIntent = new Intent(getActivity(), MovieService.AlarmReceiver.class);
+//        alarmIntent.putExtra(MovieService.SORT_QUERY_EXTRA, sort);
+//
+//        PendingIntent pi = PendingIntent.getBroadcast(getActivity(), 0 , alarmIntent, PendingIntent.FLAG_ONE_SHOT);
+//        AlarmManager am = (AlarmManager) getActivity().getSystemService(Context.ALARM_SERVICE);
+//        am.set(AlarmManager.RTC_WAKEUP, System.currentTimeMillis()+5000, pi);
+//
+//
+//        Intent intent = new Intent(getActivity(), MovieService.class);
+//        intent.putExtra(MovieService.SORT_QUERY_EXTRA,
+//                sort);
+//        getActivity().startService(intent);
+        MovieSyncAdapter.syncImmediately(getActivity());
         restartLoader();
 
     }
@@ -184,6 +222,9 @@ public class MainActivityFragment extends Fragment implements LoaderManager.Load
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
         Log.d(LOG_TAG,"loader: on load finished : "+data.getCount());
         movieAdapter.swapCursor(data);
+        if(mPosition != GridView.INVALID_POSITION){
+            gridview.setSelection(mPosition);
+        }
         movieAdapter.notifyDataSetChanged();
     }
 
@@ -192,413 +233,6 @@ public class MainActivityFragment extends Fragment implements LoaderManager.Load
         Log.d(LOG_TAG,"loader: on load reset : ");
         movieAdapter.swapCursor(null);
         movieAdapter.notifyDataSetChanged();
-    }
-
-    public class FetchMoviesTask extends AsyncTask<String, Void, Void> {
-
-        private final String LOG_TAG = FetchMoviesTask.class.getSimpleName();
-
-        Context mContext;
-        String sort;
-
-        FetchMoviesTask(Context context) {
-            mContext = context;
-        }
-
-        private ContentValues[] getReviews(long movie_id) throws JSONException {
-            HttpURLConnection urlConnection = null;
-            BufferedReader reader = null;
-            String ReviewJsonStr = null;
-
-            try {
-                // Construct the URL for the reviews link of particular movie_id
-                final String BASE_URL = "http://api.themoviedb.org/3/movie/";
-                final String APPID_PARAM = "api_key";
-
-
-                Uri builtUri = Uri.parse(BASE_URL).buildUpon()
-                                .appendPath(Long.toString(movie_id))
-                                .appendPath("reviews")
-                                .appendQueryParameter(APPID_PARAM, BuildConfig.THE_MOVIE_DB_API_KEY).build();
-
-                URL url = new URL(builtUri.toString());
-                Log.d(LOG_TAG, String.valueOf(url));
-                // Create the request to MoviedbAPI, and open the connection
-                urlConnection = (HttpURLConnection) url.openConnection();
-                urlConnection.setRequestMethod("GET");
-                urlConnection.connect();
-
-                // Read the input stream into a String
-                InputStream inputStream = urlConnection.getInputStream();
-                StringBuffer buffer = new StringBuffer();
-                if (inputStream == null) {
-                    // Nothing to do.
-                    return null;
-                }
-                reader = new BufferedReader(new InputStreamReader(inputStream));
-
-                String line;
-                while ((line = reader.readLine()) != null) {
-                    // Since it's JSON, adding a newline isn't necessary (it won't affect parsing)
-                    // But it does make debugging a *lot* easier if you print out the completed
-                    // buffer for debugging.
-                    buffer.append(line + "\n");
-                }
-
-                if (buffer.length() == 0) {
-                    // Stream was empty.  No point in parsing.
-                    return null;
-                }
-                ReviewJsonStr = buffer.toString();
-
-            } catch (IOException e) {
-                Log.e(LOG_TAG, "Error ", e);
-                // If the code didn't successfully get the reviews data, there's no point in attempting
-                // to parse it.
-                return null;
-            } finally {
-                if (urlConnection != null) {
-                    urlConnection.disconnect();
-                }
-                if (reader != null) {
-                    try {
-                        reader.close();
-                    } catch (final IOException e) {
-                        Log.e(LOG_TAG, "Error closing stream", e);
-                    }
-                }
-            }
-
-            //converting jsonstr to content value now
-
-            JSONObject ReviewJson = new JSONObject(ReviewJsonStr);
-            JSONArray reviewArray = ReviewJson.getJSONArray("results");
-
-            Vector <ContentValues> cVReviews = new Vector<ContentValues>(reviewArray.length());
-
-            for (int i=0;i<reviewArray.length();i++) {
-                ContentValues reviewValue = new ContentValues();
-                JSONObject review_item = reviewArray.getJSONObject(i);
-
-                reviewValue.put(ReviewEntry.COL_AUTHOR, review_item.getString("author"));
-                reviewValue.put(ReviewEntry.COL_CONTENT, review_item.getString("content"));
-                reviewValue.put(ReviewEntry.COL_MOVIE_ID, Long.toString(movie_id));
-
-                cVReviews.add(reviewValue);
-            }
-
-            if (cVReviews.size()>0){
-                ContentValues[] cVReviewsArray = new ContentValues[cVReviews.size()];
-                cVReviews.toArray(cVReviewsArray);
-                return cVReviewsArray;
-            }
-            else{
-                return null;
-            }
-        }
-
-
-        private ContentValues[] getVideos(long movie_id) throws JSONException {
-            HttpURLConnection urlConnection = null;
-            BufferedReader reader = null;
-            String VideoJsonStr = null;
-
-            try {
-                // Construct the URL for the reviews link of particular movie_id
-                final String BASE_URL = "http://api.themoviedb.org/3/movie/";
-                final String APPID_PARAM = "api_key";
-
-
-                Uri builtUri = Uri.parse(BASE_URL).buildUpon()
-                        .appendPath(Long.toString(movie_id))
-                        .appendPath("videos")
-                        .appendQueryParameter(APPID_PARAM, BuildConfig.THE_MOVIE_DB_API_KEY).build();
-
-                URL url = new URL(builtUri.toString());
-                Log.d(LOG_TAG, String.valueOf(url));
-                // Create the request to MoviedbAPI, and open the connection
-                urlConnection = (HttpURLConnection) url.openConnection();
-                urlConnection.setRequestMethod("GET");
-                urlConnection.connect();
-
-                // Read the input stream into a String
-                InputStream inputStream = urlConnection.getInputStream();
-                StringBuffer buffer = new StringBuffer();
-                if (inputStream == null) {
-                    // Nothing to do.
-                    return null;
-                }
-                reader = new BufferedReader(new InputStreamReader(inputStream));
-
-                String line;
-                while ((line = reader.readLine()) != null) {
-                    // Since it's JSON, adding a newline isn't necessary (it won't affect parsing)
-                    // But it does make debugging a *lot* easier if you print out the completed
-                    // buffer for debugging.
-                    buffer.append(line + "\n");
-                }
-
-                if (buffer.length() == 0) {
-                    // Stream was empty.  No point in parsing.
-                    return null;
-                }
-                Log.d("value of trailers", "movie_id "+ movie_id +String.valueOf(buffer));
-
-                VideoJsonStr = buffer.toString();
-
-            } catch (IOException e) {
-                Log.e(LOG_TAG, "Error ", e);
-                // If the code didn't successfully get the videos data, there's no point in attempting
-                // to parse it.
-                return null;
-            } finally {
-                if (urlConnection != null) {
-                    urlConnection.disconnect();
-                }
-                if (reader != null) {
-                    try {
-                        reader.close();
-                    } catch (final IOException e) {
-                        Log.e(LOG_TAG, "Error closing stream", e);
-                    }
-                }
-            }
-
-            //converting json str to content value now
-
-            JSONObject VideosJson = new JSONObject(VideoJsonStr);
-            JSONArray videosArray = VideosJson.getJSONArray("results");
-
-            Vector <ContentValues> cVVideos = new Vector<ContentValues>(videosArray.length());
-
-            for (int i = 0 ; i < videosArray.length() ; i++) {
-                ContentValues videoValue = new ContentValues();
-                JSONObject video_item = videosArray.getJSONObject(i);
-
-                videoValue.put(VideoEntry.COL_NAME, video_item.getString("name"));
-                videoValue.put(VideoEntry.COL_KEY, video_item.getString("key"));
-                videoValue.put(VideoEntry.COL_MOVIE_ID, Long.toString(movie_id));
-
-                cVVideos.add(videoValue);
-            }
-
-            if (cVVideos.size()>0){
-                ContentValues[] cVVideosArray = new ContentValues[cVVideos.size()];
-                cVVideos.toArray(cVVideosArray);
-                return cVVideosArray;
-            }
-            else{
-                return null;
-            }
-        }
-        /**
-         * Take the String representing the complete forecast in JSON Format and
-         * pull out the data we need to construct the Strings needed for the wireframes.
-         *
-         * Fortunately parsing is easy:  constructor takes the JSON string and converts it
-         * into an Object hierarchy for us.
-         */
-        private void getMovieDataFromJson(String MovieJsonStr)
-                throws JSONException {
-
-            JSONObject MovieJson = new JSONObject(MovieJsonStr);
-            JSONArray movieArray = MovieJson.getJSONArray("results");
-
-            Vector<ContentValues> cVVector = new Vector<ContentValues>(movieArray.length());
-
-            Vector<ContentValues> cVVectorSort = new Vector<ContentValues>(movieArray.length());
-
-            MovieDetail[] resultStrs = new MovieDetail[movieArray.length()];
-
-            for(int i = 0; i < movieArray.length(); i++) {
-
-                ContentValues movieValues = new ContentValues();
-                ContentValues sortValues = new ContentValues();
-
-                JSONObject movie_item = movieArray.getJSONObject(i);
-                resultStrs[i] = new MovieDetail();
-                resultStrs[i].poster_path = movie_item.getString("poster_path");
-                resultStrs[i].overview = movie_item.getString("overview");
-                resultStrs[i].releaseDate = movie_item.getString("release_date");
-                resultStrs[i].id = movie_item.getString("id");
-                resultStrs[i].title = movie_item.getString("title");
-                resultStrs[i].vote_average = movie_item.getString("vote_average");
-
-                movieValues.put(MovieEntry.COL_POSTER_PATH, movie_item.getString("poster_path"));
-                movieValues.put(MovieEntry.COL_OVERVIEW, movie_item.getString("overview"));
-                movieValues.put(MovieEntry.COL_RELEASE_DATE, movie_item.getString("release_date"));
-                movieValues.put(MovieEntry.COL_MOVIE_ID, movie_item.getString("id"));
-                movieValues.put(MovieEntry.COL_TITLE, movie_item.getString("title"));
-                movieValues.put(MovieEntry.COL_VOTE_AVERAGE, movie_item.getString("vote_average"));
-
-//                Log.d(LOG_TAG, "movieValues" + movieValues.getAsString(MovieEntry.COL_TITLE));
-
-                cVVector.add(movieValues);
-                Log.d(LOG_TAG, sort);
-                if(sort.equals("popular")){
-                    sortValues.put(PopularEntry.COL_MOVIE_ID, movie_item.getString("id"));
-                }
-                else if(sort.equals("top_rated")){
-                    sortValues.put(TopRatedEntry.COL_MOVIE_ID, movie_item.getString("id"));
-                }
-
-                cVVectorSort.add(sortValues);
-
-                // try catch block for fetching and storing reviews related to this movie
-                try {
-                    ContentValues[] cVReviews = getReviews(Long.parseLong(movie_item.getString("id")));
-                    // change vector to array
-                    if ( cVReviews != null) {
-                        int review_insert = mContext.getContentResolver().bulkInsert(ReviewEntry.CONTENT_URI, cVReviews);
-                        Log.d(LOG_TAG, "Fetch Reviews Complete. " + review_insert + " Inserted");
-
-                    }
-                    else{
-                        Log.d(LOG_TAG, "Fetch Reviews empty. 0 " + " Inserted");
-                    }
-                } catch (JSONException e) {
-                    Log.e(LOG_TAG, e.getMessage(), e);
-                    e.printStackTrace();
-                }
-
-                // try catch block to fetch and store videos related to this movie
-                try {
-                    ContentValues[] cVVideos = getVideos(Long.parseLong(movie_item.getString("id")));
-                    // check if array is not null
-                    if ( cVVideos != null) {
-                        int video_insert = mContext.getContentResolver().bulkInsert(VideoEntry.CONTENT_URI, cVVideos);
-                        Log.d(LOG_TAG, "Fetch Videos Complete. " + video_insert + " Inserted");
-                    }
-                    else{
-                        Log.d(LOG_TAG, "Fetch Videos empty. 0 " + " Inserted");
-                    }
-                } catch (JSONException e) {
-                    Log.e(LOG_TAG, e.getMessage(), e);
-                    e.printStackTrace();
-                }
-
-            }
-            int inserted = 0;
-            int insertedSort = 0;
-            if ( cVVector.size() > 0 ) {
-                ContentValues[] cvArray = new ContentValues[cVVector.size()];
-                ContentValues[] cvArraySort = new ContentValues[cVVectorSort.size()];
-                cVVector.toArray(cvArray);
-                cVVectorSort.toArray(cvArraySort);
-                inserted = mContext.getContentResolver().bulkInsert(MovieEntry.CONTENT_URI, cvArray);
-                if(sort.equals("popular")){
-                    insertedSort = mContext.getContentResolver().bulkInsert(PopularEntry.CONTENT_URI, cvArraySort);
-//                    Log.d(LOG_TAG, "inserted popular entry "+insertedSort);
-                }
-                else if(sort.equals("top_rated"))
-                {
-                    insertedSort = mContext.getContentResolver().bulkInsert(TopRatedEntry.CONTENT_URI, cvArraySort);
-//                    Log.d(LOG_TAG, getSort() + "inserted top rated entry "+insertedSort);
-                }
-            }
-
-            Log.d(LOG_TAG, "FetchWeatherTask Complete. " + inserted + " Inserted" + insertedSort + "Inserted Sort");
-
-//            return resultStrs;
-
-        }
-        @Override
-        protected Void doInBackground(String... params) {
-
-            // If there's no zip code, there's nothing to look up.  Verify size of params.
-            if (params.length == 0) {
-//                return null;
-            }
-            sort = params[0];
-
-            if(sort.equals(FAVORITE)){
-                return null;
-            }
-            String MovieJsonStr = null;
-
-            // These two need to be declared outside the try/catch
-            // so that they can be closed in the finally block.
-            HttpURLConnection urlConnection = null;
-            BufferedReader reader = null;
-
-            try {
-                // Construct the URL for the OpenWeatherMap query
-                // Possible parameters are avaiable at OWM's forecast API page, at
-                // http://openweathermap.org/API#forecast
-                final String FORECAST_BASE_URL = "http://api.themoviedb.org/3/movie/" + params[0];
-                final String APPID_PARAM = "api_key";
-
-                Uri builtUri = Uri.parse(FORECAST_BASE_URL).buildUpon()
-                        .appendQueryParameter(APPID_PARAM, BuildConfig.THE_MOVIE_DB_API_KEY)
-                        .build();
-
-                URL url = new URL(builtUri.toString());
-                Log.d(LOG_TAG, String.valueOf(url));
-                // Create the request to OpenWeatherMap, and open the connection
-                urlConnection = (HttpURLConnection) url.openConnection();
-                urlConnection.setRequestMethod("GET");
-                urlConnection.connect();
-
-                // Read the input stream into a String
-                InputStream inputStream = urlConnection.getInputStream();
-                StringBuffer buffer = new StringBuffer();
-                if (inputStream == null) {
-                    // Nothing to do.
-//                    return null;
-                }
-                reader = new BufferedReader(new InputStreamReader(inputStream));
-
-                String line;
-                while ((line = reader.readLine()) != null) {
-                    // Since it's JSON, adding a newline isn't necessary (it won't affect parsing)
-                    // But it does make debugging a *lot* easier if you print out the completed
-                    // buffer for debugging.
-                    buffer.append(line + "\n");
-                }
-
-                if (buffer.length() == 0) {
-                    // Stream was empty.  No point in parsing.
-//                    return null;
-                }
-                MovieJsonStr = buffer.toString();
-                getMovieDataFromJson(MovieJsonStr);
-
-            } catch (IOException e) {
-                Log.e(LOG_TAG, "Error ", e);
-                // If the code didn't successfully get the weather data, there's no point in attemping
-                // to parse it.
-//                return null;
-            }
-            catch (JSONException e) {
-                Log.e(LOG_TAG, e.getMessage(), e);
-                e.printStackTrace();
-            }
-            finally {
-                if (urlConnection != null) {
-                    urlConnection.disconnect();
-//                    restartLoader();
-                }
-                if (reader != null) {
-                    try {
-                        reader.close();
-                    } catch (final IOException e) {
-                        Log.e(LOG_TAG, "Error closing stream", e);
-                    }
-                }
-            }
-
-
-
-            // This will only happen if there was an error getting or parsing the forecast.
-            return null;
-        }
-
-
-//        @Override
-        protected void onPostExecute(MovieDetail[] result) {
-
-
-        }
     }
 
 }
