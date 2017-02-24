@@ -12,7 +12,7 @@
 ## Project 1: Popular movie app 
 #### Screenshots
 
-[![movie app screenshot 1](https://github.com/rashikaranpuria/My-Android-Apps/blob/master/screenshots/Screenshot_2017-02-24-11-39-32-060_rashi.com.movieapp_2.png) | width=48](#ui)
+<img src="https://github.com/rashikaranpuria/My-Android-Apps/blob/master/screenshots/Screenshot_2017-02-24-11-39-32-060_rashi.com.movieapp_2.png" alt="movie app screenshot 1" style="width: 20%"/>
 
 ###Installation
 1. Clone this repository
