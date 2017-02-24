@@ -10,30 +10,26 @@
 3. Run the project in studio.
 
 ## Project 1: Popular movie app 
-#### Screenshots
+
+#### App helps users discover, most popular and top rated movies. User can also add movie to favorites and check out favorite movies. Read about movie, overview, realease date, ratings and watch trailers and read reviews.
+
+### Screenshots
 
 <img src="https://github.com/rashikaranpuria/My-Android-Apps/blob/master/screenshots/Screenshot_2017-02-24-11-39-32-060_rashi.com.movieapp_2.png" alt="movie app screenshot 1"/>
 <img src="https://github.com/rashikaranpuria/My-Android-Apps/blob/master/screenshots/Screenshot_2017-02-24-11-39-40-775_rashi.com.movieapp_2.png" alt="movie app screenshot 1"/>
 <img src="https://github.com/rashikaranpuria/My-Android-Apps/blob/master/screenshots/Screenshot_2017-02-24-11-39-47-997_rashi.com.movieapp_2.png" alt="movie app screenshot 1"/>
 
 ###Installation
-1. Clone this repository
-2. `cd My-app-Portfolio/MovieApp/app`
-3. Set your theMovieDB api key in the build.gradle file.
-4. Open it in Android-studio and sync the project.
-
-###Features
-With the app, you can:
-* Discover the most popular, the most rated or the highest rated movies
-* Save favorite movies locally to view them even when offline
-* Watch trailers
-* Read reviews
-* Share the movie details and trailers with other.
-
+1. Clone or download zip file of this repository
+2. `vim My-app-Portfolio/MovieApp/app/build.gradle`
+3. Set your <a href="https://www.themoviedb.org/">theMovieDB api</a> key in this file.
+4. Open project in Android-studio and sync the project.
 
 ###Libraries
 * <a href="https://github.com/JakeWharton/butterknife">Butter knife</a>
 * <a href="https://developer.android.com/training/volley/index.html">Volley</a>
+* <a href="http://square.github.io/picasso/">Picasso</a>
+* <a href="https://github.com/google/gson">GSON</a>
 
 ###License
 This code is Copyright (c) 2016 Rashi Karanpuria. It is free software, and may be redistributed under the terms specified in the [License](https://github.com/rashikaranpuria/My-Android-Apps/blob/master/License.md) file.
