@@ -2,14 +2,17 @@
 
 ## Project 0 : App Portfolio
 
-#### Designed and built a layout in Android Studio for an app that showcases my apps portfolio. Each button represents an app that I'll build in the Nanodegree program.
+#### Designed and built a layout in Android Studio for an app that showcases my android app portfolio. Each button represents an app that I'll build in the Nanodegree program.
 
 ###Installation
 1. Clone this repository or download zip file.
 2. Open it with Android studio.
+3. Run the project in studio.
 
-##Project 1: Popular movie app 
-####[Screenshots and details](http://rashikaranpuria.me/movieApp.html)
+## Project 1: Popular movie app 
+#### Screenshots
+
+[![movie app screenshot 1](https://github.com/rashikaranpuria/My-Android-Apps/blob/master/screenshots/Screenshot_2017-02-24-11-39-32-060_rashi.com.movieapp_2.png)](#ui)
 
 ###Installation
 1. Clone this repository
