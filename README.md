@@ -11,7 +11,7 @@
 
 ## Project 1: Popular movie app 
 
-#### App helps users discover, most popular and top rated movies. User can also add movie to favorites and check out favorite movies. Read about movie, overview, realease date, ratings and watch trailers and read reviews.
+#### App helps users discover, most popular and top rated movies. User can also add movie to favorites and check out favorite movies. Read about movie, overview, release date, ratings and watch trailers and read reviews.
 
 ### Screenshots
 
